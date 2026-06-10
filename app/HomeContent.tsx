@@ -108,17 +108,20 @@ export default function HomeContent({ counts }: Props) {
   const past = EVENTS.filter((e) => isPast(e))
 
   return (
-    <main className="min-h-screen">
-      <header className="flex justify-center px-4 pt-8 pb-0">
-        <img
-          src="/poster-bg.png"
-          alt="Dunany Country Club 2026 Performance Series"
-          className="w-full rounded-t-xl shadow-2xl"
-          style={{ maxWidth: '680px' }}
-        />
-      </header>
+    <main
+      className="min-h-screen"
+      style={{
+        backgroundImage: 'url(/poster-bg.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'top center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'scroll',
+      }}
+    >
+      {/* spacer so the poster title / lake scene shows before cards start */}
+      <div className="h-[42vw] max-h-[420px] min-h-[220px]" />
 
-      <section className="max-w-5xl mx-auto px-4 pt-8 pb-12">
+      <section className="max-w-5xl mx-auto px-4 pt-4 pb-12">
         {upcoming.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {upcoming.map((event) => (

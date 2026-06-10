@@ -20,13 +20,13 @@ export async function registerAction(
   const memberCount = parseInt(formData.get('memberCount') as string) || 0
   const guestCount = parseInt(formData.get('guestCount') as string) || 0
 
-  if (!name) return { error: 'Full name is required.' }
-  if (!email && !phone) return { error: 'Please provide at least one contact method (email or phone).' }
-  if (memberCount + guestCount === 0) return { error: 'Please select at least 1 member or guest.' }
-  if (memberCount < 0 || memberCount > 10 || guestCount < 0 || guestCount > 10) return { error: 'Invalid ticket count.' }
+  if (!name) return { error: 'nameRequired' }
+  if (!email && !phone) return { error: 'contactRequired' }
+  if (memberCount + guestCount === 0) return { error: 'ticketRequired' }
+  if (memberCount < 0 || memberCount > 10 || guestCount < 0 || guestCount > 10) return { error: 'ticketRequired' }
 
   const event = getEventById(eventId)
-  if (!event) return { error: 'Invalid event.' }
+  if (!event) return { error: 'registrationFailed' }
 
   try {
     await prisma.registration.create({
@@ -36,6 +36,6 @@ export async function registerAction(
     revalidatePath(`/register/${eventId}`)
     return { success: true }
   } catch {
-    return { error: 'Registration failed. Please try again.' }
+    return { error: 'registrationFailed' }
   }
 }

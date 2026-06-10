@@ -1,9 +1,11 @@
 export interface ConcertEvent {
   id: string
   date: string
-  isoDate: string  // YYYY-MM-DD for date comparison
+  dateFr: string
+  isoDate: string
   artist: string
   genre: string | null
+  genreFr: string | null
   memberPrice: number
   guestPrice: number
   bgColor: string
@@ -16,9 +18,11 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'rob-lutes-bobby-stagg',
     date: 'June 6',
+    dateFr: '6 juin',
     isoDate: '2026-06-06',
     artist: 'Rob Lutes & Bobby Stagg',
     genre: 'Roots Music',
+    genreFr: 'Musique roots',
     memberPrice: 20,
     guestPrice: 25,
     bgColor: '#1a4731',
@@ -29,9 +33,11 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'comedy-fest',
     date: 'June 13',
+    dateFr: '13 juin',
     isoDate: '2026-06-13',
     artist: 'Dunany Comedy Fest',
     genre: 'Joey Elias Headliner',
+    genreFr: "Joey Elias en tête d'affiche",
     memberPrice: 20,
     guestPrice: 25,
     bgColor: '#5a0e0e',
@@ -42,9 +48,11 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'bokomaru',
     date: 'June 20',
+    dateFr: '20 juin',
     isoDate: '2026-06-20',
     artist: 'Bokomaru',
     genre: 'Grateful Dead Tribute',
+    genreFr: 'Hommage aux Grateful Dead',
     memberPrice: 20,
     guestPrice: 25,
     bgColor: '#2e1065',
@@ -55,9 +63,11 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'blue-rodeo-tribute',
     date: 'July 11',
+    dateFr: '11 juillet',
     isoDate: '2026-07-11',
     artist: 'Blue Rodeo Tribute Singers',
     genre: null,
+    genreFr: null,
     memberPrice: 20,
     guestPrice: 25,
     bgColor: '#0c2461',
@@ -68,9 +78,11 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'nils-brown',
     date: 'Aug. 28',
+    dateFr: '28 août',
     isoDate: '2026-08-28',
     artist: 'Nils Brown en Spectacle',
     genre: null,
+    genreFr: null,
     memberPrice: 20,
     guestPrice: 25,
     bgColor: '#5c2a00',
@@ -81,9 +93,11 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'guy-belanger',
     date: 'Sept. 12',
+    dateFr: '12 sept.',
     isoDate: '2026-09-12',
     artist: 'Guy Bélanger',
     genre: "Canada's Best Harmonica Player",
+    genreFr: "Le meilleur joueur d'harmonica au Canada",
     memberPrice: 25,
     guestPrice: 30,
     bgColor: '#4a3a00',

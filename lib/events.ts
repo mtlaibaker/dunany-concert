@@ -1,6 +1,7 @@
 export interface ConcertEvent {
   id: string
   date: string
+  isoDate: string  // YYYY-MM-DD for date comparison
   artist: string
   genre: string | null
   memberPrice: number
@@ -15,6 +16,7 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'rob-lutes-bobby-stagg',
     date: 'June 6',
+    isoDate: '2026-06-06',
     artist: 'Rob Lutes & Bobby Stagg',
     genre: 'Roots Music',
     memberPrice: 20,
@@ -27,6 +29,7 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'comedy-fest',
     date: 'June 13',
+    isoDate: '2026-06-13',
     artist: 'Dunany Comedy Fest',
     genre: 'Joey Elias Headliner',
     memberPrice: 20,
@@ -39,6 +42,7 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'bokomaru',
     date: 'June 20',
+    isoDate: '2026-06-20',
     artist: 'Bokomaru',
     genre: 'Grateful Dead Tribute',
     memberPrice: 20,
@@ -51,6 +55,7 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'blue-rodeo-tribute',
     date: 'July 11',
+    isoDate: '2026-07-11',
     artist: 'Blue Rodeo Tribute Singers',
     genre: null,
     memberPrice: 20,
@@ -63,6 +68,7 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'nils-brown',
     date: 'Aug. 28',
+    isoDate: '2026-08-28',
     artist: 'Nils Brown en Spectacle',
     genre: null,
     memberPrice: 20,
@@ -75,6 +81,7 @@ export const EVENTS: ConcertEvent[] = [
   {
     id: 'guy-belanger',
     date: 'Sept. 12',
+    isoDate: '2026-09-12',
     artist: 'Guy Bélanger',
     genre: "Canada's Best Harmonica Player",
     memberPrice: 25,
@@ -88,4 +95,9 @@ export const EVENTS: ConcertEvent[] = [
 
 export function getEventById(id: string): ConcertEvent | undefined {
   return EVENTS.find((e) => e.id === id)
+}
+
+export function isPast(event: ConcertEvent): boolean {
+  const today = new Date().toISOString().slice(0, 10)
+  return event.isoDate < today
 }

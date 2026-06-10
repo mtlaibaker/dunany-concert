@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getEventById, EVENTS } from '@/lib/events'
+import { getEventById, isPast, EVENTS } from '@/lib/events'
 import RegisterForm from './RegisterForm'
 
 interface Props {
@@ -64,15 +64,26 @@ export default async function RegisterPage({ params }: Props) {
             border: '1px solid rgba(120,80,30,0.3)',
           }}
         >
-          <h2 className="font-serif text-xl text-amber-300 mb-1">Reserve Your Spot</h2>
-          <p className="text-stone-500 text-sm mb-6">
-            Members: ${event.memberPrice}&nbsp;&nbsp;·&nbsp;&nbsp;Guests: ${event.guestPrice}
-          </p>
-          <RegisterForm
-            eventId={event.id}
-            memberPrice={event.memberPrice}
-            guestPrice={event.guestPrice}
-          />
+          {isPast(event) ? (
+            <div className="text-center py-8">
+              <p className="text-stone-500 text-lg mb-4">This event has passed.</p>
+              <Link href="/" className="text-amber-600 hover:text-amber-400 text-sm transition-colors">
+                ← View upcoming events
+              </Link>
+            </div>
+          ) : (
+            <>
+              <h2 className="font-serif text-xl text-amber-300 mb-1">Reserve Your Spot</h2>
+              <p className="text-stone-500 text-sm mb-6">
+                Members: ${event.memberPrice}&nbsp;&nbsp;·&nbsp;&nbsp;Guests: ${event.guestPrice}
+              </p>
+              <RegisterForm
+                eventId={event.id}
+                memberPrice={event.memberPrice}
+                guestPrice={event.guestPrice}
+              />
+            </>
+          )}
         </div>
       </div>
     </main>

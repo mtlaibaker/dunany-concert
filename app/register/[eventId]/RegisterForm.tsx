@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useRef } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 import { registerAction } from '@/app/actions'
 import Link from 'next/link'
@@ -27,19 +28,39 @@ interface Props {
 
 export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props) {
   const [state, formAction] = useFormState(registerAction, null)
+  const [memberCount, setMemberCount] = useState(0)
+  const [guestCount, setGuestCount] = useState(0)
+
+  // Keep a ref to the final totals to show in the success message
+  const submittedTotal = useRef(0)
+
+  const total = memberCount * memberPrice + guestCount * guestPrice
+
+  function handleSubmit() {
+    submittedTotal.current = total
+  }
 
   if (state?.success) {
     return (
       <div className="text-center py-10">
         <div className="text-5xl mb-4">🎵</div>
         <h3 className="font-serif text-2xl text-amber-300 mb-2">You&apos;re registered!</h3>
-        <p className="text-stone-400 text-sm">We look forward to seeing you at the show.</p>
-        <Link
-          href="/"
-          className="inline-block mt-6 text-amber-600 hover:text-amber-400 text-sm transition-colors"
-        >
-          ← View other events
-        </Link>
+        <p className="text-stone-300 text-sm mb-1">We look forward to seeing you at the show.</p>
+        {submittedTotal.current > 0 && (
+          <div
+            className="mt-5 rounded-lg px-5 py-4 inline-block"
+            style={{ background: 'rgba(201,162,39,0.1)', border: '1px solid rgba(201,162,39,0.25)' }}
+          >
+            <p className="text-stone-400 text-xs uppercase tracking-wider mb-1">Amount due at the door</p>
+            <p className="text-amber-300 text-3xl font-bold font-serif">${submittedTotal.current}</p>
+            <p className="text-stone-500 text-xs mt-1">Cash or cheque payable on the day of the event</p>
+          </div>
+        )}
+        <div className="mt-6">
+          <Link href="/" className="text-amber-600 hover:text-amber-400 text-sm transition-colors">
+            ← View other events
+          </Link>
+        </div>
       </div>
     )
   }
@@ -48,7 +69,7 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
     'w-full bg-stone-800/70 border border-stone-600/60 rounded-lg px-3.5 py-2.5 text-stone-100 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600/50 transition-colors'
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form action={formAction} className="space-y-5" onSubmit={handleSubmit}>
       <input type="hidden" name="eventId" value={eventId} />
 
       {/* Name */}
@@ -82,7 +103,7 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
         />
       </div>
 
-      {/* Phone — optional */}
+      {/* Phone */}
       <div>
         <label className="block text-sm text-stone-300 mb-1.5" htmlFor="phone">
           Phone Number{' '}
@@ -112,11 +133,15 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
             <label className="block text-xs text-amber-400 mb-1.5" htmlFor="memberCount">
               Members <span className="text-stone-500">(${memberPrice} each)</span>
             </label>
-            <select id="memberCount" name="memberCount" defaultValue="0" className={selectClass}>
+            <select
+              id="memberCount"
+              name="memberCount"
+              value={memberCount}
+              onChange={(e) => setMemberCount(parseInt(e.target.value))}
+              className={selectClass}
+            >
               {COUNT_OPTIONS.map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
+                <option key={n} value={n}>{n}</option>
               ))}
             </select>
           </div>
@@ -126,15 +151,32 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
             <label className="block text-xs text-stone-300 mb-1.5" htmlFor="guestCount">
               Guests <span className="text-stone-500">(${guestPrice} each)</span>
             </label>
-            <select id="guestCount" name="guestCount" defaultValue="0" className={selectClass}>
+            <select
+              id="guestCount"
+              name="guestCount"
+              value={guestCount}
+              onChange={(e) => setGuestCount(parseInt(e.target.value))}
+              className={selectClass}
+            >
               {COUNT_OPTIONS.map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
+                <option key={n} value={n}>{n}</option>
               ))}
             </select>
           </div>
         </div>
+
+        {/* Running total */}
+        <div className="flex items-center justify-between pt-1 border-t border-amber-900/30">
+          <span className="text-stone-400 text-sm">Estimated total</span>
+          <span className="text-amber-300 text-xl font-bold font-serif">
+            {total > 0 ? `$${total}` : '—'}
+          </span>
+        </div>
+
+        {/* Payment note */}
+        <p className="text-stone-500 text-xs">
+          Payment is made on site the day of the event.
+        </p>
       </div>
 
       {/* Error */}

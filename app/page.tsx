@@ -7,14 +7,15 @@ export const dynamic = 'force-dynamic'
 async function getEventCounts(): Promise<Record<string, { members: number; guests: number }>> {
   try {
     const grouped = await prisma.registration.groupBy({
-      by: ['eventId', 'isMember'],
-      _count: { id: true },
+      by: ['eventId'],
+      _sum: { memberCount: true, guestCount: true },
     })
     const counts: Record<string, { members: number; guests: number }> = {}
     for (const row of grouped) {
-      if (!counts[row.eventId]) counts[row.eventId] = { members: 0, guests: 0 }
-      if (row.isMember) counts[row.eventId].members = row._count.id
-      else counts[row.eventId].guests = row._count.id
+      counts[row.eventId] = {
+        members: row._sum.memberCount ?? 0,
+        guests: row._sum.guestCount ?? 0,
+      }
     }
     return counts
   } catch {

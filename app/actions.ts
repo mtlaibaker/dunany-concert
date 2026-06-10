@@ -17,17 +17,20 @@ export async function registerAction(
   const name = (formData.get('name') as string)?.trim()
   const email = (formData.get('email') as string)?.trim() || null
   const phone = (formData.get('phone') as string)?.trim() || null
-  const isMember = formData.get('isMember') === 'true'
+  const memberCount = parseInt(formData.get('memberCount') as string) || 0
+  const guestCount = parseInt(formData.get('guestCount') as string) || 0
 
   if (!name) return { error: 'Full name is required.' }
   if (!email && !phone) return { error: 'Please provide at least one contact method (email or phone).' }
+  if (memberCount + guestCount === 0) return { error: 'Please select at least 1 member or guest.' }
+  if (memberCount < 0 || memberCount > 10 || guestCount < 0 || guestCount > 10) return { error: 'Invalid ticket count.' }
 
   const event = getEventById(eventId)
   if (!event) return { error: 'Invalid event.' }
 
   try {
     await prisma.registration.create({
-      data: { eventId, name, email, phone, isMember },
+      data: { eventId, name, email, phone, memberCount, guestCount },
     })
     revalidatePath('/')
     revalidatePath(`/register/${eventId}`)

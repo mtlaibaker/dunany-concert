@@ -11,14 +11,15 @@ async function getAllRegistrations() {
 
 async function getStats() {
   const grouped = await prisma.registration.groupBy({
-    by: ['eventId', 'isMember'],
-    _count: { id: true },
+    by: ['eventId'],
+    _sum: { memberCount: true, guestCount: true },
   })
   const stats: Record<string, { members: number; guests: number }> = {}
   for (const row of grouped) {
-    if (!stats[row.eventId]) stats[row.eventId] = { members: 0, guests: 0 }
-    if (row.isMember) stats[row.eventId].members = row._count.id
-    else stats[row.eventId].guests = row._count.id
+    stats[row.eventId] = {
+      members: row._sum.memberCount ?? 0,
+      guests: row._sum.guestCount ?? 0,
+    }
   }
   return stats
 }
@@ -26,8 +27,8 @@ async function getStats() {
 export default async function AdminDashboard() {
   const [registrations, stats] = await Promise.all([getAllRegistrations(), getStats()])
 
-  const totalMembers = registrations.filter((r) => r.isMember).length
-  const totalGuests = registrations.filter((r) => !r.isMember).length
+  const totalMembers = registrations.reduce((s, r) => s + r.memberCount, 0)
+  const totalGuests = registrations.reduce((s, r) => s + r.guestCount, 0)
 
   return (
     <div className="min-h-screen p-6 md:p-10">
@@ -163,16 +164,12 @@ export default async function AdminDashboard() {
                           {reg.email && <div>{reg.email}</div>}
                           {reg.phone && <div>{reg.phone}</div>}
                         </td>
-                        <td className="px-5 py-3">
-                          <span
-                            className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                              reg.isMember
-                                ? 'bg-amber-900/50 text-amber-400'
-                                : 'bg-stone-700/50 text-stone-400'
-                            }`}
-                          >
-                            {reg.isMember ? 'Member' : 'Guest'}
-                          </span>
+                        <td className="px-5 py-3 text-sm">
+                          <span className="text-amber-400 font-medium">{reg.memberCount}</span>
+                          <span className="text-stone-600 text-xs"> mbr</span>
+                          <span className="text-stone-600 mx-1">/</span>
+                          <span className="text-stone-300 font-medium">{reg.guestCount}</span>
+                          <span className="text-stone-600 text-xs"> guest</span>
                         </td>
                         <td className="px-5 py-3 text-stone-600 text-xs">
                           {new Date(reg.createdAt).toLocaleDateString('en-CA', {

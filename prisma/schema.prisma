@@ -13,7 +13,8 @@ model Registration {
   name      String
   email     String?
   phone     String?
-  isMember  Boolean  @default(false)
+  memberCount Int @default(0)
+  guestCount  Int @default(0)
   createdAt DateTime @default(now())
 
   @@index([eventId])

@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 import { registerAction } from '@/app/actions'
 import Link from 'next/link'
+
+const COUNT_OPTIONS = Array.from({ length: 11 }, (_, i) => i) // 0–10
 
 function SubmitButton() {
   const { pending } = useFormStatus()
@@ -26,7 +27,6 @@ interface Props {
 
 export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props) {
   const [state, formAction] = useFormState(registerAction, null)
-  const [isMember, setIsMember] = useState(false)
 
   if (state?.success) {
     return (
@@ -44,10 +44,12 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
     )
   }
 
+  const selectClass =
+    'w-full bg-stone-800/70 border border-stone-600/60 rounded-lg px-3.5 py-2.5 text-stone-100 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600/50 transition-colors'
+
   return (
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="eventId" value={eventId} />
-      <input type="hidden" name="isMember" value={isMember.toString()} />
 
       {/* Name */}
       <div>
@@ -60,7 +62,7 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
           type="text"
           required
           autoComplete="name"
-          className="w-full bg-stone-800/70 border border-stone-600/60 rounded-lg px-3.5 py-2.5 text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600/50 transition-colors"
+          className={selectClass}
           placeholder="Your full name"
         />
       </div>
@@ -75,57 +77,62 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
           name="email"
           type="email"
           autoComplete="email"
-          className="w-full bg-stone-800/70 border border-stone-600/60 rounded-lg px-3.5 py-2.5 text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600/50 transition-colors"
+          className={selectClass}
           placeholder="you@example.com"
         />
       </div>
 
-      {/* Phone */}
+      {/* Phone — optional */}
       <div>
         <label className="block text-sm text-stone-300 mb-1.5" htmlFor="phone">
-          Phone Number
+          Phone Number{' '}
+          <span className="text-stone-500 font-normal">(optional)</span>
         </label>
         <input
           id="phone"
           name="phone"
           type="tel"
           autoComplete="tel"
-          className="w-full bg-stone-800/70 border border-stone-600/60 rounded-lg px-3.5 py-2.5 text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600/50 transition-colors"
+          className={selectClass}
           placeholder="(514) 555-0100"
         />
         <p className="text-xs text-stone-600 mt-1">Please provide at least one of email or phone.</p>
       </div>
 
-      {/* Member toggle */}
+      {/* Ticket counts */}
       <div
-        className="rounded-lg p-4 cursor-pointer select-none"
+        className="rounded-lg p-4 space-y-4"
         style={{ background: 'rgba(201,162,39,0.07)', border: '1px solid rgba(201,162,39,0.2)' }}
-        onClick={() => setIsMember(!isMember)}
       >
-        <div className="flex items-center justify-between gap-4">
+        <p className="text-stone-300 text-sm font-medium">Number of Tickets</p>
+
+        <div className="grid grid-cols-2 gap-4">
+          {/* Members */}
           <div>
-            <p className="text-stone-200 text-sm font-medium">
-              Dunany Country Club Member
-            </p>
-            <p className="text-stone-500 text-xs mt-0.5">
-              {isMember
-                ? `Member rate applies — $${memberPrice} per ticket`
-                : `Toggle on if you are a member — saves $${guestPrice - memberPrice}`}
-            </p>
+            <label className="block text-xs text-amber-400 mb-1.5" htmlFor="memberCount">
+              Members <span className="text-stone-500">(${memberPrice} each)</span>
+            </label>
+            <select id="memberCount" name="memberCount" defaultValue="0" className={selectClass}>
+              {COUNT_OPTIONS.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
           </div>
-          {/* Toggle switch */}
-          <div
-            className={`relative w-12 h-6 rounded-full transition-colors flex-shrink-0 ${
-              isMember ? 'bg-amber-600' : 'bg-stone-600'
-            }`}
-            role="switch"
-            aria-checked={isMember}
-          >
-            <span
-              className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                isMember ? 'translate-x-6' : 'translate-x-0'
-              }`}
-            />
+
+          {/* Guests */}
+          <div>
+            <label className="block text-xs text-stone-300 mb-1.5" htmlFor="guestCount">
+              Guests <span className="text-stone-500">(${guestPrice} each)</span>
+            </label>
+            <select id="guestCount" name="guestCount" defaultValue="0" className={selectClass}>
+              {COUNT_OPTIONS.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>

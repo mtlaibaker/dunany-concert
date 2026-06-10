@@ -53,7 +53,7 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
           >
             <p className="text-stone-400 text-xs uppercase tracking-wider mb-1">Amount due at the door</p>
             <p className="text-amber-300 text-3xl font-bold font-serif">${submittedTotal.current}</p>
-            <p className="text-stone-500 text-xs mt-1">Cash or cheque payable on the day of the event</p>
+            <p className="text-stone-500 text-xs mt-1">Payable by debit or credit card on the day of the event</p>
           </div>
         )}
         <div className="mt-6">
@@ -175,7 +175,7 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
 
         {/* Payment note */}
         <p className="text-stone-500 text-xs">
-          Payment is made on site the day of the event.
+          Payment is collected on site by debit or credit card.
         </p>
       </div>
 

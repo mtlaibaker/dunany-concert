@@ -2,10 +2,20 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
+import { prisma } from '@/lib/db'
 
 export interface LoginState {
   error?: string
   success?: boolean
+}
+
+async function verifyAdmin() {
+  const cookieStore = await cookies()
+  const auth = cookieStore.get('admin_auth')
+  if (!process.env.ADMIN_SECRET || auth?.value !== process.env.ADMIN_SECRET) {
+    throw new Error('Unauthorized')
+  }
 }
 
 export async function loginAction(
@@ -36,4 +46,25 @@ export async function logoutAction() {
   const cookieStore = await cookies()
   cookieStore.delete('admin_auth')
   redirect('/admin')
+}
+
+export async function deleteRegistrationAction(id: string): Promise<void> {
+  await verifyAdmin()
+  await prisma.registration.delete({ where: { id } })
+  revalidatePath('/admin')
+}
+
+export async function updateRegistrationAction(
+  id: string,
+  data: {
+    name: string
+    email: string | null
+    phone: string | null
+    memberCount: number
+    guestCount: number
+  }
+): Promise<void> {
+  await verifyAdmin()
+  await prisma.registration.update({ where: { id }, data })
+  revalidatePath('/admin')
 }

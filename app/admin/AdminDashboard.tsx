@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/db'
-import { EVENTS, getEventById } from '@/lib/events'
+import { EVENTS } from '@/lib/events'
 import Link from 'next/link'
 import { logoutAction } from './actions'
+import RegistrationRow from './RegistrationRow'
 
 async function getAllRegistrations() {
   return prisma.registration.findMany({
@@ -111,78 +112,24 @@ export default async function AdminDashboard() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-stone-800/60">
-                  <th className="text-left px-5 py-3 text-stone-500 font-medium text-xs uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="text-left px-5 py-3 text-stone-500 font-medium text-xs uppercase tracking-wider">
-                    Event
-                  </th>
-                  <th className="text-left px-5 py-3 text-stone-500 font-medium text-xs uppercase tracking-wider">
-                    Contact
-                  </th>
-                  <th className="text-left px-5 py-3 text-stone-500 font-medium text-xs uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="text-left px-5 py-3 text-stone-500 font-medium text-xs uppercase tracking-wider">
-                    Registered
-                  </th>
+                  {['Name', 'Event', 'Contact', 'Tickets', 'Registered', 'Actions'].map((h) => (
+                    <th key={h} className="text-left px-5 py-3 text-stone-500 font-medium text-xs uppercase tracking-wider">
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {registrations.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center py-16 text-stone-600">
+                    <td colSpan={6} className="text-center py-16 text-stone-600">
                       No registrations yet.
                     </td>
                   </tr>
                 ) : (
-                  registrations.map((reg, i) => {
-                    const event = getEventById(reg.eventId)
-                    return (
-                      <tr
-                        key={reg.id}
-                        className={
-                          i % 2 === 0 ? '' : 'bg-stone-900/30'
-                        }
-                        style={{ borderBottom: '1px solid rgba(60,40,20,0.3)' }}
-                      >
-                        <td className="px-5 py-3 text-stone-200 font-medium">{reg.name}</td>
-                        <td className="px-5 py-3">
-                          <div
-                            className="text-xs inline-flex items-center gap-1.5 px-2 py-1 rounded-full"
-                            style={{
-                              backgroundColor: event ? `${event.bgColor}99` : undefined,
-                              color: event?.textColor,
-                            }}
-                          >
-                            <span>{event?.date}</span>
-                            <span className="opacity-60">·</span>
-                            <span>{event?.artist ?? reg.eventId}</span>
-                          </div>
-                        </td>
-                        <td className="px-5 py-3 text-stone-400 text-xs space-y-0.5">
-                          {reg.email && <div>{reg.email}</div>}
-                          {reg.phone && <div>{reg.phone}</div>}
-                        </td>
-                        <td className="px-5 py-3 text-sm">
-                          <span className="text-amber-400 font-medium">{reg.memberCount}</span>
-                          <span className="text-stone-600 text-xs"> mbr</span>
-                          <span className="text-stone-600 mx-1">/</span>
-                          <span className="text-stone-300 font-medium">{reg.guestCount}</span>
-                          <span className="text-stone-600 text-xs"> guest</span>
-                        </td>
-                        <td className="px-5 py-3 text-stone-600 text-xs">
-                          {new Date(reg.createdAt).toLocaleDateString('en-CA', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </td>
-                      </tr>
-                    )
-                  })
+                  registrations.map((reg, i) => (
+                    <RegistrationRow key={reg.id} reg={reg} striped={i % 2 !== 0} />
+                  ))
                 )}
               </tbody>
             </table>

@@ -29,11 +29,34 @@ interface Props {
   guestPrice: number
 }
 
+function PrivacyNotice() {
+  const { t } = useLanguage()
+  return (
+    <div
+      className="rounded-lg p-4 space-y-3 text-xs text-stone-400 leading-relaxed max-h-52 overflow-y-auto"
+      style={{ background: 'rgba(10,6,3,0.6)', border: '1px solid rgba(120,80,30,0.25)' }}
+    >
+      <p className="text-stone-300 font-semibold text-sm">{t.privacyTitle}</p>
+      <p>{t.privacyIntro}</p>
+      <p className="text-stone-300">{t.privacyPurposesTitle}</p>
+      <ul className="list-disc list-inside space-y-1 pl-1">
+        <li>{t.privacyPurpose1}</li>
+        <li>{t.privacyPurpose2}</li>
+      </ul>
+      <p>{t.privacyNoMarketing}</p>
+      <p>{t.privacyAccess}</p>
+      <p>{t.privacyDeletion}</p>
+      <p className="text-stone-300 italic">{t.privacyConsent}</p>
+    </div>
+  )
+}
+
 export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props) {
   const { t } = useLanguage()
   const [state, formAction] = useFormState(registerAction, null)
   const [memberCount, setMemberCount] = useState(0)
   const [guestCount, setGuestCount] = useState(0)
+  const [privacyChecked, setPrivacyChecked] = useState(false)
   const submittedTotal = useRef(0)
 
   const total = memberCount * memberPrice + guestCount * guestPrice
@@ -140,6 +163,23 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
           </span>
         </div>
         <p className="text-stone-500 text-xs">{t.paymentNote}</p>
+      </div>
+
+      <div className="space-y-3">
+        <PrivacyNotice />
+        <label className="flex items-start gap-3 cursor-pointer group">
+          <input
+            type="checkbox"
+            name="privacyAcknowledged"
+            required
+            checked={privacyChecked}
+            onChange={(e) => setPrivacyChecked(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-stone-600 bg-stone-800 accent-amber-600 cursor-pointer"
+          />
+          <span className="text-stone-300 text-sm leading-snug group-hover:text-stone-200 transition-colors">
+            {t.privacyAcknowledge}
+          </span>
+        </label>
       </div>
 
       {errorMsg && (

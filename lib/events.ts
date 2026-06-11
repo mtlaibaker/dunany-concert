@@ -34,7 +34,7 @@ export const EVENTS: ConcertEvent[] = [
     id: 'comedy-fest',
     date: 'June 13',
     dateFr: '13 juin',
-    isoDate: '2026-06-13',
+    isoDate: '2026-06-10',
     artist: 'Dunany Comedy Fest',
     genre: 'Joey Elias Headliner',
     genreFr: "Joey Elias en tête d'affiche",

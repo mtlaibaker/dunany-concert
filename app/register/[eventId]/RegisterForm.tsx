@@ -63,7 +63,7 @@ function PrivacyModal({ onClose }: { onClose: () => void }) {
           onClick={onClose}
           className="mt-5 w-full py-2 rounded-lg text-sm font-semibold bg-amber-700/40 hover:bg-amber-700/60 text-amber-300 transition-colors border border-amber-800/40"
         >
-          Close
+          {t.close}
         </button>
       </div>
     </div>

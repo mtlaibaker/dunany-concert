@@ -53,6 +53,7 @@ export const translations = {
     privacyAgreePost: '.',
     privacyLinkText: 'Privacy Notice',
     privacyRequired: 'You must acknowledge the privacy notice to register.',
+    close: 'Close',
   },
   fr: {
     welcomeTo: 'Bienvenue au',
@@ -106,6 +107,7 @@ export const translations = {
     privacyAgreePost: ' ci-dessus.',
     privacyLinkText: 'avis de confidentialité',
     privacyRequired: "Vous devez accepter l'avis de confidentialité pour vous inscrire.",
+    close: 'Fermer',
   },
 } as const
 

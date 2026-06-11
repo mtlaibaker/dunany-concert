@@ -108,20 +108,26 @@ export default function HomeContent({ counts }: Props) {
   const past = EVENTS.filter((e) => isPast(e))
 
   return (
-    <main
-      className="min-h-screen"
-      style={{
-        backgroundImage: 'url(/poster-bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'top center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'scroll',
-      }}
-    >
-      {/* spacer so the poster title / lake scene shows before cards start */}
-      <div className="h-[42vw] max-h-[420px] min-h-[220px]" />
+    <main className="min-h-screen">
+      <header className="text-center py-14 px-4" style={{ borderBottom: '1px solid rgba(201,162,39,0.2)' }}>
+        <p className="text-amber-500 text-xs tracking-[0.35em] uppercase mb-3 font-sans">{t.welcomeTo}</p>
+        <h1 className="font-serif text-5xl md:text-7xl font-bold text-amber-300 tracking-wide leading-tight">
+          Dunany Country Club
+        </h1>
+        <div className="text-amber-500 text-3xl font-serif font-bold tracking-widest my-2">2026</div>
+        <h2 className="font-serif text-2xl md:text-4xl text-amber-400 tracking-[0.2em] uppercase mb-6">
+          {t.performanceSeries}
+        </h2>
+        <div className="w-32 h-px mx-auto mb-5" style={{ background: 'linear-gradient(90deg, transparent, #c9a227, transparent)' }} />
+        <p className="text-stone-400 text-sm">
+          {t.showTimePrefix}{' '}
+          <span className="text-amber-400 font-semibold">{t.showTime}</span>
+          {' · '}
+          {t.address}
+        </p>
+      </header>
 
-      <section className="max-w-5xl mx-auto px-4 pt-4 pb-12">
+      <section className="max-w-5xl mx-auto px-4 py-12">
         {upcoming.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {upcoming.map((event) => (
@@ -145,13 +151,14 @@ export default function HomeContent({ counts }: Props) {
           </div>
         )}
 
-        <div className="mt-12 text-center">
+        <div className="mt-16 text-center space-y-1">
           <p className="text-stone-500 text-sm">
             {t.questions}{' '}
             <a href="mailto:Dan_Leblanc13@hotmail.com" className="text-amber-700 hover:text-amber-500 transition-colors">
               Dan_Leblanc13@hotmail.com
             </a>
           </p>
+          <p className="text-stone-600 text-xs tracking-widest uppercase">{t.tagline}</p>
         </div>
       </section>
     </main>

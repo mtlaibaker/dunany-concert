@@ -28,8 +28,7 @@ async function getStats() {
 export default async function AdminDashboard() {
   const [registrations, stats] = await Promise.all([getAllRegistrations(), getStats()])
 
-  const totalMembers = registrations.reduce((s, r) => s + r.memberCount, 0)
-  const totalGuests = registrations.reduce((s, r) => s + r.guestCount, 0)
+  const totalTickets = registrations.reduce((s, r) => s + r.memberCount + r.guestCount, 0)
 
   return (
     <div className="min-h-screen p-6 md:p-10">
@@ -42,7 +41,7 @@ export default async function AdminDashboard() {
             </Link>
             <h1 className="font-serif text-3xl text-amber-300 mt-1">Registration Dashboard</h1>
             <p className="text-stone-500 text-sm mt-1">
-              {registrations.length} total &nbsp;·&nbsp; {totalMembers} members &nbsp;·&nbsp; {totalGuests} guests
+              {registrations.length} registrations &nbsp;·&nbsp; {totalTickets} tickets
             </p>
           </div>
           <div className="flex gap-3 items-center">
@@ -84,12 +83,8 @@ export default async function AdminDashboard() {
                 </p>
                 <div className="flex gap-3 text-sm">
                   <span>
-                    <span className="text-amber-400 font-bold">{s.members}</span>
-                    <span className="text-stone-600 text-xs ml-1">members</span>
-                  </span>
-                  <span>
-                    <span className="text-stone-300 font-bold">{s.guests}</span>
-                    <span className="text-stone-600 text-xs ml-1">guests</span>
+                    <span className="text-amber-400 font-bold">{s.members + s.guests}</span>
+                    <span className="text-stone-600 text-xs ml-1">tickets</span>
                   </span>
                 </div>
               </div>

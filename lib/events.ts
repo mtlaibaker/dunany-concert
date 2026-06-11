@@ -6,8 +6,7 @@ export interface ConcertEvent {
   artist: string
   genre: string | null
   genreFr: string | null
-  memberPrice: number
-  guestPrice: number
+  price: number
   bgColor: string
   borderColor: string
   textColor: string
@@ -23,8 +22,7 @@ export const EVENTS: ConcertEvent[] = [
     artist: 'Rob Lutes & Bobby Stagg',
     genre: 'Roots Music',
     genreFr: 'Musique roots',
-    memberPrice: 20,
-    guestPrice: 25,
+    price: 25,
     bgColor: '#1a4731',
     borderColor: '#2d7a52',
     textColor: '#d4edda',
@@ -38,8 +36,7 @@ export const EVENTS: ConcertEvent[] = [
     artist: 'Dunany Comedy Fest',
     genre: 'Joey Elias Headliner',
     genreFr: "Joey Elias en tête d'affiche",
-    memberPrice: 20,
-    guestPrice: 25,
+    price: 25,
     bgColor: '#5a0e0e',
     borderColor: '#9b2226',
     textColor: '#ffd6d6',
@@ -53,8 +50,7 @@ export const EVENTS: ConcertEvent[] = [
     artist: 'Bokomaru',
     genre: 'Grateful Dead Tribute',
     genreFr: 'Hommage aux Grateful Dead',
-    memberPrice: 20,
-    guestPrice: 25,
+    price: 25,
     bgColor: '#2e1065',
     borderColor: '#6d28d9',
     textColor: '#ede9fe',
@@ -68,8 +64,7 @@ export const EVENTS: ConcertEvent[] = [
     artist: 'Blue Rodeo Tribute Singers',
     genre: null,
     genreFr: null,
-    memberPrice: 20,
-    guestPrice: 25,
+    price: 25,
     bgColor: '#0c2461',
     borderColor: '#1e6bbd',
     textColor: '#d0e8f8',
@@ -83,8 +78,7 @@ export const EVENTS: ConcertEvent[] = [
     artist: 'Nils Brown en Spectacle',
     genre: null,
     genreFr: null,
-    memberPrice: 20,
-    guestPrice: 25,
+    price: 25,
     bgColor: '#5c2a00',
     borderColor: '#b35900',
     textColor: '#fff0d0',
@@ -98,8 +92,7 @@ export const EVENTS: ConcertEvent[] = [
     artist: 'Guy Bélanger',
     genre: "Canada's Best Harmonica Player",
     genreFr: "Le meilleur joueur d'harmonica au Canada",
-    memberPrice: 25,
-    guestPrice: 30,
+    price: 30,
     bgColor: '#4a3a00',
     borderColor: '#c9a227',
     textColor: '#fff8d0',

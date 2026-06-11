@@ -54,13 +54,8 @@ function EventCard({
 
         <div className="flex gap-4 text-sm mb-4">
           <span className="text-stone-400">
-            {t.members}:{' '}
-            <span className={past ? 'text-stone-500' : 'text-amber-400 font-semibold'}>${event.memberPrice}</span>
-          </span>
-          <span className="text-stone-700">|</span>
-          <span className="text-stone-400">
-            {t.guests}:{' '}
-            <span className={past ? 'text-stone-500' : 'text-amber-400 font-semibold'}>${event.guestPrice}</span>
+            {t.generalAdmission}:{' '}
+            <span className={past ? 'text-stone-500' : 'text-amber-400 font-semibold'}>${event.price}</span>
           </span>
         </div>
 
@@ -72,15 +67,8 @@ function EventCard({
               border: `1px solid ${past ? 'rgba(80,80,80,0.2)' : 'rgba(201,162,39,0.2)'}`,
             }}
           >
-            <div className={`text-2xl font-bold ${past ? 'text-stone-600' : 'text-amber-300'}`}>{counts.members}</div>
-            <div className="text-xs text-stone-600 uppercase tracking-wider mt-0.5">{t.members}</div>
-          </div>
-          <div
-            className="flex-1 rounded-lg px-3 py-2.5 text-center"
-            style={{ background: 'rgba(60,60,60,0.15)', border: '1px solid rgba(80,80,80,0.2)' }}
-          >
-            <div className={`text-2xl font-bold ${past ? 'text-stone-600' : 'text-stone-300'}`}>{counts.guests}</div>
-            <div className="text-xs text-stone-600 uppercase tracking-wider mt-0.5">{t.guests}</div>
+            <div className={`text-2xl font-bold ${past ? 'text-stone-600' : 'text-amber-300'}`}>{total}</div>
+            <div className="text-xs text-stone-600 uppercase tracking-wider mt-0.5">{t.ticketsLabel}</div>
           </div>
         </div>
 

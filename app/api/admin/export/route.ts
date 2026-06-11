@@ -21,7 +21,7 @@ export async function GET() {
 
   const escape = (s: string) => `"${s.replace(/"/g, '""')}"`
 
-  const header = 'Name,Event,Date,Email,Phone,Members,Guests,Registered At\n'
+  const header = 'Name,Event,Date,Email,Phone,Tickets,Registered At\n'
   const rows = registrations
     .map((r) => {
       const event = getEventById(r.eventId)
@@ -31,8 +31,7 @@ export async function GET() {
         event?.date ?? '',
         r.email ? escape(r.email) : '',
         r.phone ? escape(r.phone) : '',
-        r.memberCount,
-        r.guestCount,
+        r.memberCount + r.guestCount,
         new Date(r.createdAt).toISOString(),
       ].join(',')
     })

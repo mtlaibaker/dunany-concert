@@ -99,11 +99,7 @@ export default function RegistrationRow({ reg, striped }: Props) {
         {/* Counts */}
         <td className="px-4 py-2">
           <div className="flex items-center gap-2 text-xs">
-            <label className="text-stone-500">Mbr</label>
-            <select value={memberCount} onChange={(e) => setMemberCount(parseInt(e.target.value))} className={selectClass}>
-              {COUNT_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
-            </select>
-            <label className="text-stone-500">Gst</label>
+            <label className="text-stone-500">Tickets</label>
             <select value={guestCount} onChange={(e) => setGuestCount(parseInt(e.target.value))} className={selectClass}>
               {COUNT_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
             </select>
@@ -154,11 +150,8 @@ export default function RegistrationRow({ reg, striped }: Props) {
         {reg.phone && <div>{reg.phone}</div>}
       </td>
       <td className="px-5 py-3 text-sm">
-        <span className="text-amber-400 font-medium">{reg.memberCount}</span>
-        <span className="text-stone-600 text-xs"> mbr</span>
-        <span className="text-stone-600 mx-1">/</span>
-        <span className="text-stone-300 font-medium">{reg.guestCount}</span>
-        <span className="text-stone-600 text-xs"> guest</span>
+        <span className="text-amber-400 font-medium">{reg.memberCount + reg.guestCount}</span>
+        <span className="text-stone-600 text-xs"> tickets</span>
       </td>
       <td className="px-5 py-3 text-stone-600 text-xs">
         {new Date(reg.createdAt).toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}

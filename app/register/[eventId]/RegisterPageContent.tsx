@@ -65,12 +65,11 @@ export default function RegisterPageContent({ event }: Props) {
             <>
               <h2 className="font-serif text-xl text-amber-300 mb-1">{t.reserveSpot}</h2>
               <p className="text-stone-500 text-sm mb-6">
-                {t.members}: ${event.memberPrice}&nbsp;&nbsp;·&nbsp;&nbsp;{t.guests}: ${event.guestPrice}
+                {t.generalAdmission}: ${event.price}
               </p>
               <RegisterForm
                 eventId={event.id}
-                memberPrice={event.memberPrice}
-                guestPrice={event.guestPrice}
+                guestPrice={event.price}
               />
             </>
           )}

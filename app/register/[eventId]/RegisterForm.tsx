@@ -72,20 +72,18 @@ function PrivacyModal({ onClose }: { onClose: () => void }) {
 
 interface Props {
   eventId: string
-  memberPrice: number
   guestPrice: number
 }
 
-export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props) {
+export default function RegisterForm({ eventId, guestPrice }: Props) {
   const { t } = useLanguage()
   const [state, formAction] = useFormState(registerAction, null)
-  const [memberCount, setMemberCount] = useState(0)
-  const [guestCount, setGuestCount] = useState(0)
+  const [ticketCount, setTicketCount] = useState(0)
   const [privacyChecked, setPrivacyChecked] = useState(false)
   const [showPrivacy, setShowPrivacy] = useState(false)
   const submittedTotal = useRef(0)
 
-  const total = memberCount * memberPrice + guestCount * guestPrice
+  const total = ticketCount * guestPrice
 
   function handleSubmit() {
     submittedTotal.current = total
@@ -157,32 +155,18 @@ export default function RegisterForm({ eventId, memberPrice, guestPrice }: Props
           className="rounded-lg p-4 space-y-4"
           style={{ background: 'rgba(201,162,39,0.07)', border: '1px solid rgba(201,162,39,0.2)' }}
         >
-          <p className="text-stone-300 text-sm font-medium">{t.numberOfTickets}</p>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs text-amber-400 mb-1.5" htmlFor="memberCount">
-                {t.members} <span className="text-stone-500">(${memberPrice} {t.each})</span>
-              </label>
-              <select
-                id="memberCount" name="memberCount"
-                value={memberCount} onChange={(e) => setMemberCount(parseInt(e.target.value))}
-                className={inputClass}
-              >
-                {COUNT_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs text-stone-300 mb-1.5" htmlFor="guestCount">
-                {t.guests} <span className="text-stone-500">(${guestPrice} {t.each})</span>
-              </label>
-              <select
-                id="guestCount" name="guestCount"
-                value={guestCount} onChange={(e) => setGuestCount(parseInt(e.target.value))}
-                className={inputClass}
-              >
-                {COUNT_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
-              </select>
-            </div>
+          <div>
+            <label className="block text-xs text-amber-400 mb-1.5" htmlFor="guestCount">
+              {t.generalAdmission} <span className="text-stone-500">(${guestPrice} {t.each})</span>
+            </label>
+            <input type="hidden" name="memberCount" value="0" />
+            <select
+              id="guestCount" name="guestCount"
+              value={ticketCount} onChange={(e) => setTicketCount(parseInt(e.target.value))}
+              className={inputClass}
+            >
+              {COUNT_OPTIONS.map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
           </div>
 
           <div className="flex items-center justify-between pt-1 border-t border-amber-900/30">

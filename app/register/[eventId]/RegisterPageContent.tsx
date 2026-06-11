@@ -61,6 +61,14 @@ export default function RegisterPageContent({ event }: Props) {
                 {t.viewUpcomingEvents}
               </Link>
             </div>
+          ) : event.tbd ? (
+            <div className="text-center py-8">
+              <p className="text-amber-500 text-base mb-2">{t.dateTbd}</p>
+              <p className="text-stone-500 text-sm mb-4">{t.tbdNotice}</p>
+              <Link href="/" className="text-amber-600 hover:text-amber-400 text-sm transition-colors">
+                {t.backToEvents}
+              </Link>
+            </div>
           ) : (
             <>
               <h2 className="font-serif text-xl text-amber-300 mb-1">{t.reserveSpot}</h2>

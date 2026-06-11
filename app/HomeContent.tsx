@@ -76,6 +76,10 @@ function EventCard({
           <div className="block text-center py-2.5 rounded-lg text-sm text-stone-600 border border-stone-800">
             {t.eventPassed}
           </div>
+        ) : event.tbd ? (
+          <div className="block text-center py-2.5 rounded-lg text-sm text-stone-500 border border-stone-700">
+            {t.tbdNotice}
+          </div>
         ) : (
           <Link
             href={`/register/${event.id}`}

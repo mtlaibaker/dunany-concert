@@ -7,6 +7,7 @@ export interface ConcertEvent {
   genre: string | null
   genreFr: string | null
   price: number
+  tbd?: boolean
   bgColor: string
   borderColor: string
   textColor: string
@@ -86,10 +87,11 @@ export const EVENTS: ConcertEvent[] = [
   },
   {
     id: 'guy-belanger',
-    date: 'Sept. 12',
-    dateFr: '12 sept.',
-    isoDate: '2026-09-12',
+    date: 'TBD',
+    dateFr: 'À déterminer',
+    isoDate: '2026-12-31',
     artist: 'Guy Bélanger',
+    tbd: true,
     genre: "Canada's Best Harmonica Player",
     genreFr: "Le meilleur joueur d'harmonica au Canada",
     price: 30,

@@ -49,6 +49,9 @@ export const translations = {
     privacyDeletion: 'All personal information collected for this event will be securely deleted within a reasonable period following the conclusion of the final event.',
     privacyConsent: 'By submitting your registration, you consent to the collection and use of your information as described above.',
     privacyAcknowledge: 'I have read and agree to the Privacy Notice above.',
+    privacyAgreePre: 'I have read and agree to the ',
+    privacyAgreePost: '.',
+    privacyLinkText: 'Privacy Notice',
     privacyRequired: 'You must acknowledge the privacy notice to register.',
   },
   fr: {
@@ -99,6 +102,9 @@ export const translations = {
     privacyDeletion: 'Tous les renseignements personnels collectés pour cet événement seront supprimés de façon sécurisée dans un délai raisonnable suivant la conclusion du dernier événement.',
     privacyConsent: 'En soumettant votre inscription, vous consentez à la collecte et à l’utilisation de vos renseignements tels que décrits ci-dessus.',
     privacyAcknowledge: "J'ai lu et j'accepte l'avis de confidentialité ci-dessus.",
+    privacyAgreePre: "J'ai lu et j'accepte l'",
+    privacyAgreePost: ' ci-dessus.',
+    privacyLinkText: 'avis de confidentialité',
     privacyRequired: "Vous devez accepter l'avis de confidentialité pour vous inscrire.",
   },
 } as const

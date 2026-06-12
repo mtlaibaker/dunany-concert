@@ -50,7 +50,6 @@ export async function registerAction(
       data: { eventId, name, email, phone, memberCount, guestCount },
     })
     revalidatePath('/')
-    revalidatePath(`/register/${eventId}`)
 
     // Schedule email after response is returned — user gets success screen immediately
     if (event.maxCapacity != null) {

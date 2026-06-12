@@ -1,11 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { EVENTS, isPast, type ConcertEvent } from '@/lib/events'
+import { isPast, type ConcertEvent } from '@/lib/events'
 import { useLanguage } from './LanguageContext'
 
 interface Props {
   counts: Record<string, { members: number; guests: number }>
+  events: ConcertEvent[]
 }
 
 function EventCard({
@@ -21,6 +22,8 @@ function EventCard({
   const total = counts.members + counts.guests
   const date = lang === 'fr' ? event.dateFr : event.date
   const genre = lang === 'fr' ? event.genreFr : event.genre
+  const isFull = event.maxCapacity != null && total >= event.maxCapacity
+  const spotsLeft = event.maxCapacity != null ? Math.max(0, event.maxCapacity - total) : null
 
   return (
     <div
@@ -52,11 +55,16 @@ function EventCard({
         </h3>
         {genre && <p className="text-stone-500 text-sm italic mb-3">{genre}</p>}
 
-        <div className="flex gap-4 text-sm mb-4">
+        <div className="flex items-center justify-between text-sm mb-4">
           <span className="text-stone-400">
             {t.generalAdmission}:{' '}
             <span className={past ? 'text-stone-500' : 'text-amber-400 font-semibold'}>${event.price}</span>
           </span>
+          {spotsLeft !== null && !past && (
+            <span className={`text-xs ${spotsLeft === 0 ? 'text-red-400' : 'text-stone-500'}`}>
+              {spotsLeft} {t.spotsRemaining}
+            </span>
+          )}
         </div>
 
         <div className="flex gap-3 mb-5">
@@ -67,7 +75,12 @@ function EventCard({
               border: `1px solid ${past ? 'rgba(80,80,80,0.2)' : 'rgba(201,162,39,0.2)'}`,
             }}
           >
-            <div className={`text-2xl font-bold ${past ? 'text-stone-600' : 'text-amber-300'}`}>{total}</div>
+            <div className={`text-2xl font-bold ${past ? 'text-stone-600' : 'text-amber-300'}`}>
+              {total}
+              {event.maxCapacity != null && (
+                <span className="text-sm text-stone-600 font-normal"> / {event.maxCapacity}</span>
+              )}
+            </div>
             <div className="text-xs text-stone-600 uppercase tracking-wider mt-0.5">{t.ticketsLabel}</div>
           </div>
         </div>
@@ -79,6 +92,10 @@ function EventCard({
         ) : event.tbd ? (
           <div className="block text-center py-2.5 rounded-lg text-sm text-stone-500 border border-stone-700">
             {t.tbdNotice}
+          </div>
+        ) : isFull ? (
+          <div className="block text-center py-2.5 rounded-lg text-sm font-semibold text-red-400 border border-red-900/40 bg-red-900/10">
+            {t.soldOut}
           </div>
         ) : (
           <Link
@@ -94,10 +111,10 @@ function EventCard({
   )
 }
 
-export default function HomeContent({ counts }: Props) {
+export default function HomeContent({ counts, events }: Props) {
   const { t } = useLanguage()
-  const upcoming = EVENTS.filter((e) => !isPast(e))
-  const past = EVENTS.filter((e) => isPast(e))
+  const upcoming = events.filter((e) => !isPast(e))
+  const past = events.filter((e) => isPast(e))
 
   return (
     <main className="min-h-screen">

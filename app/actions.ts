@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { getEventById } from '@/lib/events'
+import { getMergedEvent } from '@/lib/eventConfig'
 import { revalidatePath } from 'next/cache'
 
 export interface RegisterState {
@@ -25,8 +25,19 @@ export async function registerAction(
   if (memberCount + guestCount === 0) return { error: 'ticketRequired' }
   if (memberCount < 0 || memberCount > 10 || guestCount < 0 || guestCount > 10) return { error: 'ticketRequired' }
 
-  const event = getEventById(eventId)
+  const event = await getMergedEvent(eventId)
   if (!event) return { error: 'registrationFailed' }
+
+  if (event.maxCapacity != null) {
+    const agg = await prisma.registration.aggregate({
+      where: { eventId },
+      _sum: { memberCount: true, guestCount: true },
+    })
+    const current = (agg._sum.memberCount ?? 0) + (agg._sum.guestCount ?? 0)
+    if (current + guestCount > event.maxCapacity) {
+      return { error: 'capacityFull' }
+    }
+  }
 
   try {
     await prisma.registration.create({

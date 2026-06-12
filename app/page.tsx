@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { getMergedEvents } from '@/lib/eventConfig'
 import HomeContent from './HomeContent'
 
 export const dynamic = 'force-dynamic'
@@ -23,6 +24,6 @@ async function getEventCounts(): Promise<Record<string, { members: number; guest
 }
 
 export default async function HomePage() {
-  const counts = await getEventCounts()
-  return <HomeContent counts={counts} />
+  const [counts, events] = await Promise.all([getEventCounts(), getMergedEvents()])
+  return <HomeContent counts={counts} events={events} />
 }

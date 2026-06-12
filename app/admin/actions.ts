@@ -68,3 +68,33 @@ export async function updateRegistrationAction(
   await prisma.registration.update({ where: { id }, data })
   revalidatePath('/admin')
 }
+
+export async function updateEventConfigAction(
+  eventId: string,
+  data: {
+    artist: string | null
+    isoDate: string | null
+    genre: string | null
+    genreFr: string | null
+    tbd: boolean
+    maxCapacity: number | null
+  }
+): Promise<void> {
+  await verifyAdmin()
+  await prisma.eventConfig.upsert({
+    where: { eventId },
+    create: { eventId, ...data },
+    update: { ...data },
+  })
+  revalidatePath('/')
+  revalidatePath('/admin')
+  revalidatePath(`/register/${eventId}`)
+}
+
+export async function resetEventConfigAction(eventId: string): Promise<void> {
+  await verifyAdmin()
+  await prisma.eventConfig.deleteMany({ where: { eventId } })
+  revalidatePath('/')
+  revalidatePath('/admin')
+  revalidatePath(`/register/${eventId}`)
+}

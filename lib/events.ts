@@ -8,6 +8,7 @@ export interface ConcertEvent {
   genreFr: string | null
   price: number
   tbd?: boolean
+  maxCapacity?: number
   bgColor: string
   borderColor: string
   textColor: string

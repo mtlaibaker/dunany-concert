@@ -8,14 +8,25 @@ datasource db {
 }
 
 model Registration {
-  id        String   @id @default(cuid())
-  eventId   String
-  name      String
-  email     String?
-  phone     String?
-  memberCount Int @default(0)
-  guestCount  Int @default(0)
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  eventId     String
+  name        String
+  email       String?
+  phone       String?
+  memberCount Int      @default(0)
+  guestCount  Int      @default(0)
+  createdAt   DateTime @default(now())
 
   @@index([eventId])
+}
+
+model EventConfig {
+  eventId     String   @id
+  artist      String?
+  isoDate     String?
+  genre       String?
+  genreFr     String?
+  tbd         Boolean?
+  maxCapacity Int?
+  updatedAt   DateTime @updatedAt
 }

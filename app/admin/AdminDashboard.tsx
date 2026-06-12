@@ -1,8 +1,9 @@
 import { prisma } from '@/lib/db'
-import { EVENTS } from '@/lib/events'
+import { getMergedEvents } from '@/lib/eventConfig'
 import Link from 'next/link'
 import { logoutAction } from './actions'
 import RegistrationRow from './RegistrationRow'
+import EventEditorButton from './EventEditor'
 
 async function getAllRegistrations() {
   return prisma.registration.findMany({
@@ -15,18 +16,19 @@ async function getStats() {
     by: ['eventId'],
     _sum: { memberCount: true, guestCount: true },
   })
-  const stats: Record<string, { members: number; guests: number }> = {}
+  const stats: Record<string, number> = {}
   for (const row of grouped) {
-    stats[row.eventId] = {
-      members: row._sum.memberCount ?? 0,
-      guests: row._sum.guestCount ?? 0,
-    }
+    stats[row.eventId] = (row._sum.memberCount ?? 0) + (row._sum.guestCount ?? 0)
   }
   return stats
 }
 
 export default async function AdminDashboard() {
-  const [registrations, stats] = await Promise.all([getAllRegistrations(), getStats()])
+  const [registrations, stats, events] = await Promise.all([
+    getAllRegistrations(),
+    getStats(),
+    getMergedEvents(),
+  ])
 
   const totalTickets = registrations.reduce((s, r) => s + r.memberCount + r.guestCount, 0)
 
@@ -62,34 +64,18 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Per-event summary cards */}
+        {/* Per-event cards — click to edit */}
+        <div className="mb-3">
+          <h2 className="text-xs text-stone-500 uppercase tracking-widest mb-3">Events — click to edit</h2>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
-          {EVENTS.map((event) => {
-            const s = stats[event.id] ?? { members: 0, guests: 0 }
-            return (
-              <div
-                key={event.id}
-                className="rounded-xl p-4"
-                style={{
-                  background: 'rgba(26,16,10,0.7)',
-                  borderLeft: `3px solid ${event.borderColor}`,
-                  border: `1px solid rgba(120,80,30,0.2)`,
-                  borderLeftColor: event.borderColor,
-                }}
-              >
-                <p className="text-xs text-stone-500 uppercase tracking-wider mb-0.5">{event.date}</p>
-                <p className="text-stone-200 text-sm font-medium leading-tight mb-3">
-                  {event.artist}
-                </p>
-                <div className="flex gap-3 text-sm">
-                  <span>
-                    <span className="text-amber-400 font-bold">{s.members + s.guests}</span>
-                    <span className="text-stone-600 text-xs ml-1">tickets</span>
-                  </span>
-                </div>
-              </div>
-            )
-          })}
+          {events.map((event) => (
+            <EventEditorButton
+              key={`${event.id}-${event.artist}-${event.isoDate}-${event.maxCapacity}`}
+              event={event}
+              ticketCount={stats[event.id] ?? 0}
+            />
+          ))}
         </div>
 
         {/* Full registrations table */}

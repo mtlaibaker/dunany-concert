@@ -7,13 +7,16 @@ import RegisterForm from './RegisterForm'
 
 interface Props {
   event: ConcertEvent
+  ticketCount: number
 }
 
-export default function RegisterPageContent({ event }: Props) {
+export default function RegisterPageContent({ event, ticketCount }: Props) {
   const { lang, t } = useLanguage()
   const past = isPast(event)
   const date = lang === 'fr' ? event.dateFr : event.date
   const genre = lang === 'fr' ? event.genreFr : event.genre
+  const isFull = event.maxCapacity != null && ticketCount >= event.maxCapacity
+  const spotsLeft = event.maxCapacity != null ? Math.max(0, event.maxCapacity - ticketCount) : null
 
   return (
     <main className="min-h-screen py-10 px-4">
@@ -69,16 +72,24 @@ export default function RegisterPageContent({ event }: Props) {
                 {t.backToEvents}
               </Link>
             </div>
+          ) : isFull ? (
+            <div className="text-center py-8">
+              <p className="text-red-400 text-lg font-semibold mb-2">{t.soldOut}</p>
+              <p className="text-stone-500 text-sm mb-4">{t.capacityFull}</p>
+              <Link href="/" className="text-amber-600 hover:text-amber-400 text-sm transition-colors">
+                {t.backToEvents}
+              </Link>
+            </div>
           ) : (
             <>
               <h2 className="font-serif text-xl text-amber-300 mb-1">{t.reserveSpot}</h2>
               <p className="text-stone-500 text-sm mb-6">
                 {t.generalAdmission}: ${event.price}
+                {spotsLeft !== null && (
+                  <span className="ml-3 text-amber-700">· {spotsLeft} {t.spotsRemaining}</span>
+                )}
               </p>
-              <RegisterForm
-                eventId={event.id}
-                guestPrice={event.price}
-              />
+              <RegisterForm eventId={event.id} guestPrice={event.price} />
             </>
           )}
         </div>

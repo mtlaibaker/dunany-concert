@@ -76,8 +76,11 @@ interface Props {
 }
 
 export default function RegisterForm({ eventId, guestPrice }: Props) {
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
   const [state, formAction] = useFormState(registerAction, null)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
   const [ticketCount, setTicketCount] = useState(0)
   const [privacyChecked, setPrivacyChecked] = useState(false)
   const [showPrivacy, setShowPrivacy] = useState(false)
@@ -89,9 +92,16 @@ export default function RegisterForm({ eventId, guestPrice }: Props) {
     submittedTotal.current = total
   }
 
-  const errorMsg = state?.error
-    ? (t[state.error as TranslationKey] ?? state.error)
-    : null
+  const errorMsg = (() => {
+    if (!state?.error) return null
+    if (state.error === 'tooManyTickets' && state.remaining != null) {
+      const n = state.remaining
+      return lang === 'fr'
+        ? `Seulement ${n} place${n === 1 ? '' : 's'} restante${n === 1 ? '' : 's'}. Veuillez réduire votre sélection.`
+        : `Only ${n} spot${n === 1 ? '' : 's'} remaining. Please reduce your selection.`
+    }
+    return t[state.error as TranslationKey] ?? state.error
+  })()
 
   if (state?.success) {
     return (
@@ -132,14 +142,14 @@ export default function RegisterForm({ eventId, guestPrice }: Props) {
           <label className="block text-sm text-stone-300 mb-1.5" htmlFor="name">
             {t.fullName} <span className="text-red-400">*</span>
           </label>
-          <input id="name" name="name" type="text" required autoComplete="name" className={inputClass} placeholder={t.fullName} />
+          <input id="name" name="name" type="text" required autoComplete="name" className={inputClass} placeholder={t.fullName} value={name} onChange={(e) => setName(e.target.value)} />
         </div>
 
         <div>
           <label className="block text-sm text-stone-300 mb-1.5" htmlFor="email">
             {t.emailAddress}
           </label>
-          <input id="email" name="email" type="email" autoComplete="email" className={inputClass} placeholder="you@example.com" />
+          <input id="email" name="email" type="email" autoComplete="email" className={inputClass} placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
 
         <div>
@@ -147,7 +157,7 @@ export default function RegisterForm({ eventId, guestPrice }: Props) {
             {t.phoneNumber}{' '}
             <span className="text-stone-500 font-normal">{t.phoneOptional}</span>
           </label>
-          <input id="phone" name="phone" type="tel" autoComplete="tel" className={inputClass} placeholder="(514) 555-0100" />
+          <input id="phone" name="phone" type="tel" autoComplete="tel" className={inputClass} placeholder="(514) 555-0100" value={phone} onChange={(e) => setPhone(e.target.value)} />
           <p className="text-xs text-stone-600 mt-1">{t.phoneHint}</p>
         </div>
 

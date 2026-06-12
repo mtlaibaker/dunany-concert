@@ -9,6 +9,7 @@ import { after } from 'next/server'
 export interface RegisterState {
   error?: string
   success?: boolean
+  remaining?: number
 }
 
 export async function registerAction(
@@ -38,7 +39,9 @@ export async function registerAction(
     })
     currentTickets = (agg._sum.memberCount ?? 0) + (agg._sum.guestCount ?? 0)
     if (currentTickets + guestCount > event.maxCapacity) {
-      return { error: 'capacityFull' }
+      const remaining = event.maxCapacity - currentTickets
+      if (remaining <= 0) return { error: 'capacityFull' }
+      return { error: 'tooManyTickets', remaining }
     }
   }
 

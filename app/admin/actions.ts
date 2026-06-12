@@ -98,3 +98,14 @@ export async function resetEventConfigAction(eventId: string): Promise<void> {
   revalidatePath('/admin')
   revalidatePath(`/register/${eventId}`)
 }
+
+export async function updateSiteConfigAction(contactEmail: string): Promise<void> {
+  await verifyAdmin()
+  await prisma.siteConfig.upsert({
+    where: { id: 1 },
+    create: { id: 1, contactEmail },
+    update: { contactEmail },
+  })
+  revalidatePath('/')
+  revalidatePath('/admin')
+}

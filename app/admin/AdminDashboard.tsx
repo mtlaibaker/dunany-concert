@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { logoutAction } from './actions'
 import RegistrationRow from './RegistrationRow'
 import EventEditorButton from './EventEditor'
+import ContactEditor from './ContactEditor'
 
 async function getAllRegistrations() {
   return prisma.registration.findMany({
@@ -24,11 +25,13 @@ async function getStats() {
 }
 
 export default async function AdminDashboard() {
-  const [registrations, stats, events] = await Promise.all([
+  const [registrations, stats, events, siteConfig] = await Promise.all([
     getAllRegistrations(),
     getStats(),
     getMergedEvents(),
+    prisma.siteConfig.findUnique({ where: { id: 1 } }),
   ])
+  const contactEmail = siteConfig?.contactEmail ?? 'Dan_Leblanc13@hotmail.com'
 
   const totalTickets = registrations.reduce((s, r) => s + r.memberCount + r.guestCount, 0)
 
@@ -63,6 +66,9 @@ export default async function AdminDashboard() {
             </form>
           </div>
         </div>
+
+        {/* Contact info */}
+        <ContactEditor contactEmail={contactEmail} />
 
         {/* Per-event cards — click to edit */}
         <div className="mb-3">

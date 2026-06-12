@@ -23,7 +23,20 @@ async function getEventCounts(): Promise<Record<string, { members: number; guest
   }
 }
 
+async function getContactEmail(): Promise<string> {
+  try {
+    const config = await prisma.siteConfig.findUnique({ where: { id: 1 } })
+    return config?.contactEmail ?? 'Dan_Leblanc13@hotmail.com'
+  } catch {
+    return 'Dan_Leblanc13@hotmail.com'
+  }
+}
+
 export default async function HomePage() {
-  const [counts, events] = await Promise.all([getEventCounts(), getMergedEvents()])
-  return <HomeContent counts={counts} events={events} />
+  const [counts, events, contactEmail] = await Promise.all([
+    getEventCounts(),
+    getMergedEvents(),
+    getContactEmail(),
+  ])
+  return <HomeContent counts={counts} events={events} contactEmail={contactEmail} />
 }

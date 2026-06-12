@@ -7,6 +7,7 @@ import { useLanguage } from './LanguageContext'
 interface Props {
   counts: Record<string, { members: number; guests: number }>
   events: ConcertEvent[]
+  contactEmail: string
 }
 
 function EventCard({
@@ -111,7 +112,7 @@ function EventCard({
   )
 }
 
-export default function HomeContent({ counts, events }: Props) {
+export default function HomeContent({ counts, events, contactEmail }: Props) {
   const { t } = useLanguage()
   const upcoming = events.filter((e) => !isPast(e))
   const past = events.filter((e) => isPast(e))
@@ -163,8 +164,8 @@ export default function HomeContent({ counts, events }: Props) {
         <div className="mt-16 text-center space-y-1">
           <p className="text-stone-500 text-sm">
             {t.questions}{' '}
-            <a href="mailto:Dan_Leblanc13@hotmail.com" className="text-amber-700 hover:text-amber-500 transition-colors">
-              Dan_Leblanc13@hotmail.com
+            <a href={`mailto:${contactEmail}`} className="text-amber-700 hover:text-amber-500 transition-colors">
+              {contactEmail}
             </a>
           </p>
           <p className="text-stone-600 text-xs tracking-widest uppercase">{t.tagline}</p>

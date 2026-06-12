@@ -49,7 +49,7 @@ export default function EventEditorButton({ event, ticketCount }: Props) {
   }
 
   function handleReset() {
-    if (!confirm(`Reset "${event.artist}" to default values? This cannot be undone.`)) return
+    if (!confirm(`Reset "${event.artist}" to default values?\n\nThis will clear all custom edits (title, date, description, capacity) and restore the original settings. This cannot be undone.`)) return
     startTransition(async () => {
       await resetEventConfigAction(event.id)
       setOpen(false)
@@ -165,9 +165,9 @@ export default function EventEditorButton({ event, ticketCount }: Props) {
               <button
                 onClick={handleReset}
                 disabled={isPending}
-                className="text-xs text-stone-600 hover:text-stone-400 transition-colors disabled:opacity-40"
+                className="px-3 py-1.5 rounded-lg text-xs font-medium border border-red-800/60 text-red-400 hover:bg-red-900/30 hover:border-red-700 transition-colors disabled:opacity-40"
               >
-                Reset to defaults
+                ↺ Reset to defaults
               </button>
               <div className="flex gap-3">
                 <button

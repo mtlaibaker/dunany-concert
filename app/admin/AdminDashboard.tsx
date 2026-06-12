@@ -2,9 +2,10 @@ import { prisma } from '@/lib/db'
 import { getMergedEvents } from '@/lib/eventConfig'
 import Link from 'next/link'
 import { logoutAction } from './actions'
-import RegistrationRow from './RegistrationRow'
 import EventEditorButton from './EventEditor'
 import ContactEditor from './ContactEditor'
+import RegistrationsTable from './RegistrationsTable'
+import type { RegistrationData, EventSummary } from './RegistrationsTable'
 
 async function getAllRegistrations() {
   return prisma.registration.findMany({
@@ -32,8 +33,28 @@ export default async function AdminDashboard() {
     prisma.siteConfig.findUnique({ where: { id: 1 } }),
   ])
   const contactEmail = siteConfig?.contactEmail ?? 'Dan_Leblanc13@hotmail.com'
-
   const totalTickets = registrations.reduce((s, r) => s + r.memberCount + r.guestCount, 0)
+
+  const serializedRegs: RegistrationData[] = registrations.map((r) => ({
+    id: r.id,
+    eventId: r.eventId,
+    name: r.name,
+    email: r.email,
+    phone: r.phone,
+    memberCount: r.memberCount,
+    guestCount: r.guestCount,
+    createdAt: r.createdAt.toISOString(),
+  }))
+
+  const eventSummaries: EventSummary[] = events.map((e) => ({
+    id: e.id,
+    artist: e.artist,
+    date: e.date,
+    isoDate: e.isoDate,
+    bgColor: e.bgColor,
+    textColor: e.textColor,
+    borderColor: e.borderColor,
+  }))
 
   return (
     <div className="min-h-screen p-6 md:p-10">
@@ -49,22 +70,14 @@ export default async function AdminDashboard() {
               {registrations.length} registrations &nbsp;·&nbsp; {totalTickets} tickets
             </p>
           </div>
-          <div className="flex gap-3 items-center">
-            <a
-              href="/api/admin/export"
-              className="px-4 py-2 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-200 text-sm transition-colors"
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-lg bg-red-900/40 hover:bg-red-900/70 text-red-400 text-sm transition-colors"
             >
-              ↓ Export CSV
-            </a>
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-red-900/40 hover:bg-red-900/70 text-red-400 text-sm transition-colors"
-              >
-                Sign Out
-              </button>
-            </form>
-          </div>
+              Sign Out
+            </button>
+          </form>
         </div>
 
         {/* Contact info */}
@@ -84,44 +97,8 @@ export default async function AdminDashboard() {
           ))}
         </div>
 
-        {/* Full registrations table */}
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{
-            background: 'rgba(26,16,10,0.7)',
-            border: '1px solid rgba(120,80,30,0.2)',
-          }}
-        >
-          <div className="px-6 py-4 border-b border-stone-800/60">
-            <h2 className="font-serif text-lg text-amber-300">All Registrations</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-stone-800/60">
-                  {['Name', 'Event', 'Contact', 'Tickets', 'Registered', 'Actions'].map((h) => (
-                    <th key={h} className="text-left px-5 py-3 text-stone-500 font-medium text-xs uppercase tracking-wider">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {registrations.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="text-center py-16 text-stone-600">
-                      No registrations yet.
-                    </td>
-                  </tr>
-                ) : (
-                  registrations.map((reg, i) => (
-                    <RegistrationRow key={reg.id} reg={reg} striped={i % 2 !== 0} />
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        {/* Registrations table with sort + filter + export */}
+        <RegistrationsTable registrations={serializedRegs} events={eventSummaries} />
       </div>
     </div>
   )

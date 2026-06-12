@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { deleteRegistrationAction, updateRegistrationAction } from './actions'
 import { getEventById } from '@/lib/events'
-import type { Registration } from '@prisma/client'
+import type { RegistrationData } from './RegistrationsTable'
 
 const COUNT_OPTIONS = Array.from({ length: 11 }, (_, i) => i)
 
@@ -14,7 +14,7 @@ const selectClass =
   'bg-stone-800 border border-stone-600 rounded px-2 py-1 text-stone-100 text-sm focus:outline-none focus:border-amber-600'
 
 interface Props {
-  reg: Registration
+  reg: RegistrationData
   striped: boolean
 }
 

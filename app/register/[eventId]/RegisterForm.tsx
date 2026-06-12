@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 import { registerAction } from '@/app/actions'
 import { useLanguage } from '@/app/LanguageContext'
@@ -85,6 +85,13 @@ export default function RegisterForm({ eventId, guestPrice }: Props) {
   const [privacyChecked, setPrivacyChecked] = useState(false)
   const [showPrivacy, setShowPrivacy] = useState(false)
   const submittedTotal = useRef(0)
+
+  // Reset ticket count when a capacity error is returned so select and total stay in sync
+  useEffect(() => {
+    if (state?.error === 'tooManyTickets' || state?.error === 'capacityFull') {
+      setTicketCount(0)
+    }
+  }, [state])
 
   const total = ticketCount * guestPrice
 

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { getMergedEvent } from '@/lib/eventConfig'
 import { sendCapacityAlert } from '@/lib/email'
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
 
 export interface RegisterState {
   error?: string
@@ -48,9 +49,14 @@ export async function registerAction(
     revalidatePath('/')
     revalidatePath(`/register/${eventId}`)
 
-    // Capacity threshold alerts (80%, 90%, 100%)
+    // Schedule email after response is returned — user gets success screen immediately
     if (event.maxCapacity != null) {
-      await checkAndSendCapacityAlerts(event.artist, event.maxCapacity, currentTickets, guestCount)
+      const { artist, maxCapacity } = event
+      const prev = currentTickets
+      const added = guestCount
+      after(async () => {
+        await checkAndSendCapacityAlerts(artist, maxCapacity, prev, added)
+      })
     }
 
     return { success: true }

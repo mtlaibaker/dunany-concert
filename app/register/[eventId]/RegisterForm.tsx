@@ -185,7 +185,10 @@ export default function RegisterForm({ eventId, guestPrice }: Props) {
               {total > 0 ? `$${total}` : '—'}
             </span>
           </div>
-          <p className="text-stone-500 text-xs">{t.paymentNote}</p>
+          <div className="flex items-center gap-2 rounded-md px-3 py-2" style={{ background: 'rgba(201,162,39,0.12)', border: '1px solid rgba(201,162,39,0.3)' }}>
+            <span className="text-amber-400 text-base leading-none">💳</span>
+            <p className="text-amber-300 text-xs font-medium">{t.paymentNote}</p>
+          </div>
         </div>
 
         <label className="flex items-start gap-3 cursor-pointer group">

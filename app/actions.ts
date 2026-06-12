@@ -66,12 +66,16 @@ async function checkAndSendCapacityAlerts(
   addedTickets: number
 ) {
   const newCount = previousCount + addedTickets
+  const pct = Math.round((newCount / maxCapacity) * 100)
+  console.log(`[capacity] "${eventName}": ${newCount}/${maxCapacity} (${pct}%) — was ${previousCount}`)
+
   const siteConfig = await prisma.siteConfig.findUnique({ where: { id: 1 } })
   const toEmail = siteConfig?.contactEmail ?? 'Dan_Leblanc13@hotmail.com'
 
   for (const threshold of [80, 90, 100]) {
     const limit = Math.floor(maxCapacity * threshold / 100)
     if (previousCount < limit && newCount >= limit) {
+      console.log(`[capacity] Threshold ${threshold}% crossed — sending alert to ${toEmail}`)
       await sendCapacityAlert({ toEmail, eventName, ticketCount: newCount, maxCapacity, threshold })
     }
   }

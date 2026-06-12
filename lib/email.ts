@@ -1,8 +1,37 @@
 import { Resend } from 'resend'
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
-
 const FROM = process.env.RESEND_FROM ?? 'Dunany Concert Series <noreply@dunany.ca>'
+
+function getResend() {
+  if (!process.env.RESEND_API_KEY) return null
+  return new Resend(process.env.RESEND_API_KEY)
+}
+
+export async function sendTestEmail(toEmail: string): Promise<{ ok: boolean; error?: string }> {
+  const resend = getResend()
+  if (!resend) return { ok: false, error: 'RESEND_API_KEY is not set in environment variables.' }
+
+  try {
+    const { error } = await resend.emails.send({
+      from: FROM,
+      to: toEmail,
+      subject: 'Dunany Concert Series — Email Test',
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:0 auto;color:#333">
+          <h2 style="color:#92400e">Email configuration working ✓</h2>
+          <p>This is a test message from the Dunany Concert Series admin panel.</p>
+          <p>Capacity alert emails will be sent to this address when events reach 80%, 90%, and 100% capacity.</p>
+          <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
+          <p style="color:#9ca3af;font-size:12px">Sent from: ${FROM}</p>
+        </div>
+      `,
+    })
+    if (error) return { ok: false, error: error.message }
+    return { ok: true }
+  } catch (err) {
+    return { ok: false, error: String(err) }
+  }
+}
 
 export async function sendCapacityAlert({
   toEmail,
@@ -17,6 +46,7 @@ export async function sendCapacityAlert({
   maxCapacity: number
   threshold: number
 }) {
+  const resend = getResend()
   if (!resend) {
     console.warn('[email] RESEND_API_KEY not set — skipping capacity alert')
     return
@@ -53,12 +83,8 @@ export async function sendCapacityAlert({
   `
 
   try {
-    await resend.emails.send({
-      from: FROM,
-      to: toEmail,
-      subject,
-      html,
-    })
+    await resend.emails.send({ from: FROM, to: toEmail, subject, html })
+    console.log(`[email] Capacity alert sent: ${subject} → ${toEmail}`)
   } catch (err) {
     console.error('[email] Failed to send capacity alert:', err)
   }

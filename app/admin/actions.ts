@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/db'
+import { sendTestEmail } from '@/lib/email'
 
 export interface LoginState {
   error?: string
@@ -108,4 +109,9 @@ export async function updateSiteConfigAction(contactEmail: string): Promise<void
   })
   revalidatePath('/')
   revalidatePath('/admin')
+}
+
+export async function sendTestEmailAction(toEmail: string): Promise<{ ok: boolean; error?: string }> {
+  await verifyAdmin()
+  return sendTestEmail(toEmail)
 }

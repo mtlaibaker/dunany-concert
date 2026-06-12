@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { updateSiteConfigAction } from './actions'
+import { updateSiteConfigAction, sendTestEmailAction } from './actions'
 
 interface Props {
   contactEmail: string
@@ -11,6 +11,8 @@ export default function ContactEditor({ contactEmail }: Props) {
   const [email, setEmail] = useState(contactEmail)
   const [saved, setSaved] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [testStatus, setTestStatus] = useState<{ ok: boolean; message: string } | null>(null)
+  const [isTesting, startTestTransition] = useTransition()
 
   function handleSave() {
     if (!email.trim()) return
@@ -18,6 +20,19 @@ export default function ContactEditor({ contactEmail }: Props) {
       await updateSiteConfigAction(email.trim())
       setSaved(true)
       setTimeout(() => setSaved(false), 2500)
+    })
+  }
+
+  function handleTest() {
+    if (!email.trim()) return
+    setTestStatus(null)
+    startTestTransition(async () => {
+      const result = await sendTestEmailAction(email.trim())
+      setTestStatus(
+        result.ok
+          ? { ok: true, message: `Test email sent to ${email.trim()}` }
+          : { ok: false, message: result.error ?? 'Unknown error' }
+      )
     })
   }
 
@@ -33,19 +48,31 @@ export default function ContactEditor({ contactEmail }: Props) {
           <input
             type="email"
             value={email}
-            onChange={(e) => { setEmail(e.target.value); setSaved(false) }}
+            onChange={(e) => { setEmail(e.target.value); setSaved(false); setTestStatus(null) }}
             className="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 text-stone-100 text-sm focus:outline-none focus:border-amber-600 transition-colors"
             placeholder="contact@example.com"
           />
         </div>
         <button
+          onClick={handleTest}
+          disabled={isTesting || isPending || !email.trim()}
+          className="mt-5 px-4 py-2 rounded-lg text-sm bg-stone-700 hover:bg-stone-600 text-stone-200 transition-colors disabled:opacity-40 shrink-0"
+        >
+          {isTesting ? 'Sending…' : 'Send Test'}
+        </button>
+        <button
           onClick={handleSave}
-          disabled={isPending || !email.trim()}
+          disabled={isPending || isTesting || !email.trim()}
           className="mt-5 px-4 py-2 rounded-lg text-sm font-semibold bg-amber-700 hover:bg-amber-600 text-amber-100 transition-colors disabled:opacity-40 shrink-0"
         >
           {isPending ? 'Saving…' : saved ? '✓ Saved' : 'Save'}
         </button>
       </div>
+      {testStatus && (
+        <p className={`mt-3 text-xs ${testStatus.ok ? 'text-green-400' : 'text-red-400'}`}>
+          {testStatus.ok ? '✓ ' : '✕ '}{testStatus.message}
+        </p>
+      )}
     </div>
   )
 }

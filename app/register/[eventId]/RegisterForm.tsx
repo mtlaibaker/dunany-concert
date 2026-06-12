@@ -73,9 +73,10 @@ function PrivacyModal({ onClose }: { onClose: () => void }) {
 interface Props {
   eventId: string
   guestPrice: number
+  isFull?: boolean
 }
 
-export default function RegisterForm({ eventId, guestPrice }: Props) {
+export default function RegisterForm({ eventId, guestPrice, isFull }: Props) {
   const { t, lang } = useLanguage()
   const [state, formAction] = useFormState(registerAction, null)
   const [name, setName] = useState('')
@@ -109,6 +110,18 @@ export default function RegisterForm({ eventId, guestPrice }: Props) {
     }
     return t[state.error as TranslationKey] ?? state.error
   })()
+
+  if (isFull && !state?.success) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-400 text-lg font-semibold mb-2">{t.soldOut}</p>
+        <p className="text-stone-500 text-sm mb-4">{t.capacityFull}</p>
+        <Link href="/" className="text-amber-600 hover:text-amber-400 text-sm transition-colors">
+          {t.backToEvents}
+        </Link>
+      </div>
+    )
+  }
 
   if (state?.success) {
     return (

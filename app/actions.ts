@@ -48,9 +48,9 @@ export async function registerAction(
     revalidatePath('/')
     revalidatePath(`/register/${eventId}`)
 
-    // Capacity threshold alerts (80%, 90%, 100%) — fire-and-forget
+    // Capacity threshold alerts (80%, 90%, 100%)
     if (event.maxCapacity != null) {
-      void checkAndSendCapacityAlerts(event.artist, event.maxCapacity, currentTickets, guestCount)
+      await checkAndSendCapacityAlerts(event.artist, event.maxCapacity, currentTickets, guestCount)
     }
 
     return { success: true }

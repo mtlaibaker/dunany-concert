@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/db'
 import { getMergedEvent } from '@/lib/eventConfig'
+import { sendCapacityAlert } from '@/lib/email'
 import { revalidatePath } from 'next/cache'
 
 export interface RegisterState {
@@ -28,13 +29,14 @@ export async function registerAction(
   const event = await getMergedEvent(eventId)
   if (!event) return { error: 'registrationFailed' }
 
+  let currentTickets = 0
   if (event.maxCapacity != null) {
     const agg = await prisma.registration.aggregate({
       where: { eventId },
       _sum: { memberCount: true, guestCount: true },
     })
-    const current = (agg._sum.memberCount ?? 0) + (agg._sum.guestCount ?? 0)
-    if (current + guestCount > event.maxCapacity) {
+    currentTickets = (agg._sum.memberCount ?? 0) + (agg._sum.guestCount ?? 0)
+    if (currentTickets + guestCount > event.maxCapacity) {
       return { error: 'capacityFull' }
     }
   }
@@ -45,8 +47,32 @@ export async function registerAction(
     })
     revalidatePath('/')
     revalidatePath(`/register/${eventId}`)
+
+    // Capacity threshold alerts (80%, 90%, 100%) — fire-and-forget
+    if (event.maxCapacity != null) {
+      void checkAndSendCapacityAlerts(event.artist, event.maxCapacity, currentTickets, guestCount)
+    }
+
     return { success: true }
   } catch {
     return { error: 'registrationFailed' }
+  }
+}
+
+async function checkAndSendCapacityAlerts(
+  eventName: string,
+  maxCapacity: number,
+  previousCount: number,
+  addedTickets: number
+) {
+  const newCount = previousCount + addedTickets
+  const siteConfig = await prisma.siteConfig.findUnique({ where: { id: 1 } })
+  const toEmail = siteConfig?.contactEmail ?? 'Dan_Leblanc13@hotmail.com'
+
+  for (const threshold of [80, 90, 100]) {
+    const limit = Math.floor(maxCapacity * threshold / 100)
+    if (previousCount < limit && newCount >= limit) {
+      await sendCapacityAlert({ toEmail, eventName, ticketCount: newCount, maxCapacity, threshold })
+    }
   }
 }

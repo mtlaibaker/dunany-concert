@@ -120,27 +120,25 @@ export default function EventEditorButton({ event, ticketCount }: Props) {
               </div>
 
               {/* Description */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className={labelClass}>Description (EN)</label>
-                  <input
-                    type="text"
-                    value={genre}
-                    onChange={(e) => setGenre(e.target.value)}
-                    className={inputClass}
-                    placeholder="e.g. Roots Music"
-                  />
-                </div>
-                <div>
-                  <label className={labelClass}>Description (FR)</label>
-                  <input
-                    type="text"
-                    value={genreFr}
-                    onChange={(e) => setGenreFr(e.target.value)}
-                    className={inputClass}
-                    placeholder="e.g. Musique roots"
-                  />
-                </div>
+              <div>
+                <label className={labelClass}>Description (EN)</label>
+                <textarea
+                  value={genre}
+                  onChange={(e) => setGenre(e.target.value)}
+                  rows={3}
+                  className={`${inputClass} resize-none`}
+                  placeholder="e.g. Roots Music"
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Description (FR)</label>
+                <textarea
+                  value={genreFr}
+                  onChange={(e) => setGenreFr(e.target.value)}
+                  rows={3}
+                  className={`${inputClass} resize-none`}
+                  placeholder="e.g. Musique roots"
+                />
               </div>
 
               {/* Max Capacity */}

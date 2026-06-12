@@ -1,19 +1,26 @@
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 
-const FROM = process.env.RESEND_FROM ?? 'Dunany Concert Series <noreply@dunany.ca>'
+const FROM_NAME = 'Dunany Concert Series'
 
-function getResend() {
-  if (!process.env.RESEND_API_KEY) return null
-  return new Resend(process.env.RESEND_API_KEY)
+function getTransporter() {
+  const user = process.env.GMAIL_USER
+  const pass = process.env.GMAIL_APP_PASSWORD
+  if (!user || !pass) return null
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user, pass },
+  })
 }
 
 export async function sendTestEmail(toEmail: string): Promise<{ ok: boolean; error?: string }> {
-  const resend = getResend()
-  if (!resend) return { ok: false, error: 'RESEND_API_KEY is not set in environment variables.' }
+  const transporter = getTransporter()
+  if (!transporter) {
+    return { ok: false, error: 'GMAIL_USER or GMAIL_APP_PASSWORD is not set in environment variables.' }
+  }
 
   try {
-    const { error } = await resend.emails.send({
-      from: FROM,
+    await transporter.sendMail({
+      from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
       to: toEmail,
       subject: 'Dunany Concert Series — Email Test',
       html: `
@@ -21,12 +28,9 @@ export async function sendTestEmail(toEmail: string): Promise<{ ok: boolean; err
           <h2 style="color:#92400e">Email configuration working ✓</h2>
           <p>This is a test message from the Dunany Concert Series admin panel.</p>
           <p>Capacity alert emails will be sent to this address when events reach 80%, 90%, and 100% capacity.</p>
-          <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
-          <p style="color:#9ca3af;font-size:12px">Sent from: ${FROM}</p>
         </div>
       `,
     })
-    if (error) return { ok: false, error: error.message }
     return { ok: true }
   } catch (err) {
     return { ok: false, error: String(err) }
@@ -46,9 +50,9 @@ export async function sendCapacityAlert({
   maxCapacity: number
   threshold: number
 }) {
-  const resend = getResend()
-  if (!resend) {
-    console.warn('[email] RESEND_API_KEY not set — skipping capacity alert')
+  const transporter = getTransporter()
+  if (!transporter) {
+    console.warn('[email] GMAIL_USER or GMAIL_APP_PASSWORD not set — skipping capacity alert')
     return
   }
 
@@ -83,7 +87,12 @@ export async function sendCapacityAlert({
   `
 
   try {
-    await resend.emails.send({ from: FROM, to: toEmail, subject, html })
+    await transporter.sendMail({
+      from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
+      to: toEmail,
+      subject,
+      html,
+    })
     console.log(`[email] Capacity alert sent: ${subject} → ${toEmail}`)
   } catch (err) {
     console.error('[email] Failed to send capacity alert:', err)

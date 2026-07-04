@@ -6,13 +6,15 @@ import { getMergedEvent, getTicketCount } from '@/lib/eventConfig'
 import { isPast } from '@/lib/events'
 import Link from 'next/link'
 import RegisterForm from '@/app/register/[eventId]/RegisterForm'
+import { prisma } from '@/lib/db'
 
 export default async function MemberRegisterPage({
   params,
 }: {
   params: Promise<{ eventId: string }>
 }) {
-  const secret = process.env.MEMBER_SECRET
+  const siteConfig = await prisma.siteConfig.findUnique({ where: { id: 1 } })
+  const secret = siteConfig?.memberSecret
   const cookieStore = await cookies()
   const auth = cookieStore.get('member_auth')
   if (!secret || auth?.value !== secret) redirect('/members')

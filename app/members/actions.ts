@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/db'
 
 export interface MemberLoginState {
   error?: string
@@ -12,7 +13,8 @@ export async function memberLoginAction(
   formData: FormData
 ): Promise<MemberLoginState> {
   const password = formData.get('password') as string
-  const secret = process.env.MEMBER_SECRET
+  const siteConfig = await prisma.siteConfig.findUnique({ where: { id: 1 } })
+  const secret = siteConfig?.memberSecret
 
   if (!secret) return { error: 'Member access is not configured on this server.' }
 

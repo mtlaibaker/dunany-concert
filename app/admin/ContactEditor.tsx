@@ -5,10 +5,12 @@ import { updateSiteConfigAction, sendTestEmailAction } from './actions'
 
 interface Props {
   contactEmail: string
+  memberSecretEnabled: boolean
 }
 
-export default function ContactEditor({ contactEmail }: Props) {
+export default function ContactEditor({ contactEmail, memberSecretEnabled }: Props) {
   const [email, setEmail] = useState(contactEmail)
+  const [memberSecret, setMemberSecret] = useState('')
   const [saved, setSaved] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [testStatus, setTestStatus] = useState<{ ok: boolean; message: string } | null>(null)
@@ -16,9 +18,11 @@ export default function ContactEditor({ contactEmail }: Props) {
 
   function handleSave() {
     if (!email.trim()) return
+    const secretValue = memberSecret.trim()
     startTransition(async () => {
-      await updateSiteConfigAction(email.trim())
+      await updateSiteConfigAction(email.trim(), secretValue === '' ? undefined : secretValue)
       setSaved(true)
+      setMemberSecret('')
       setTimeout(() => setSaved(false), 2500)
     })
   }
@@ -42,8 +46,8 @@ export default function ContactEditor({ contactEmail }: Props) {
       style={{ background: 'rgba(26,16,10,0.7)', border: '1px solid rgba(120,80,30,0.2)' }}
     >
       <h2 className="text-xs text-stone-500 uppercase tracking-widest mb-3">Site Contact Info</h2>
-      <div className="flex items-center gap-3">
-        <div className="flex-1">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.5fr_1fr]">
+        <div>
           <label className="block text-xs text-stone-400 mb-1">Contact Email (shown on public site)</label>
           <input
             type="email"
@@ -53,6 +57,23 @@ export default function ContactEditor({ contactEmail }: Props) {
             placeholder="contact@example.com"
           />
         </div>
+        <div>
+          <label className="block text-xs text-stone-400 mb-1">Member Password</label>
+          <input
+            type="password"
+            value={memberSecret}
+            onChange={(e) => { setMemberSecret(e.target.value); setSaved(false); setTestStatus(null) }}
+            className="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 text-stone-100 text-sm focus:outline-none focus:border-amber-600 transition-colors"
+            placeholder="Enter a new member password"
+          />
+          <p className="text-xs text-stone-500 mt-2">
+            {memberSecretEnabled
+              ? 'A members password is currently enabled. Leave blank to keep it unchanged or enter a new password to update it.'
+              : 'No members password is set yet. Enter one to enable the members area.'}
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center gap-3 mt-4">
         <button
           onClick={handleTest}
           disabled={isTesting || isPending || !email.trim()}

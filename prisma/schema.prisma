@@ -22,8 +22,9 @@ model Registration {
 }
 
 model SiteConfig {
-  id           Int    @id @default(1)
-  contactEmail String @default("Dan_Leblanc13@hotmail.com")
+  id           Int     @id @default(1)
+  contactEmail String  @default("Dan_Leblanc13@hotmail.com")
+  memberSecret String?
 }
 
 model EventConfig {

@@ -100,12 +100,29 @@ export async function resetEventConfigAction(eventId: string): Promise<void> {
   revalidatePath(`/register/${eventId}`)
 }
 
-export async function updateSiteConfigAction(contactEmail: string): Promise<void> {
+export async function updateSiteConfigAction(contactEmail: string, memberSecret?: string): Promise<void> {
   await verifyAdmin()
+
+  const normalizedSecret =
+    memberSecret === undefined ? undefined : memberSecret.trim() === '' ? null : memberSecret
+
+  const createData: { id: number; contactEmail: string; memberSecret?: string | null } = {
+    id: 1,
+    contactEmail,
+  }
+  const updateData: { contactEmail: string; memberSecret?: string | null } = {
+    contactEmail,
+  }
+
+  if (normalizedSecret !== undefined) {
+    createData.memberSecret = normalizedSecret
+    updateData.memberSecret = normalizedSecret
+  }
+
   await prisma.siteConfig.upsert({
     where: { id: 1 },
-    create: { id: 1, contactEmail },
-    update: { contactEmail },
+    create: createData,
+    update: updateData,
   })
   revalidatePath('/')
   revalidatePath('/admin')

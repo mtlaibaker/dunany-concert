@@ -3,9 +3,11 @@ export const dynamic = 'force-dynamic'
 import { cookies } from 'next/headers'
 import MembersLogin from './MembersLogin'
 import MembersDashboard from './MembersDashboard'
+import { prisma } from '@/lib/db'
 
 export default async function MembersPage() {
-  const secret = process.env.MEMBER_SECRET
+  const siteConfig = await prisma.siteConfig.findUnique({ where: { id: 1 } })
+  const secret = siteConfig?.memberSecret
 
   if (!secret) {
     return (

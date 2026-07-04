@@ -75,9 +75,10 @@ interface Props {
   guestPrice: number
   isFull?: boolean
   isMember?: boolean
+  returnHref?: string
 }
 
-export default function RegisterForm({ eventId, guestPrice, isFull, isMember }: Props) {
+export default function RegisterForm({ eventId, guestPrice, isFull, isMember, returnHref = '/' }: Props) {
   const { t, lang } = useLanguage()
   const [state, formAction] = useFormState(registerAction, null)
   const [name, setName] = useState('')
@@ -117,7 +118,7 @@ export default function RegisterForm({ eventId, guestPrice, isFull, isMember }: 
       <div className="text-center py-8">
         <p className="text-red-400 text-lg font-semibold mb-2">{t.soldOut}</p>
         <p className="text-stone-500 text-sm mb-4">{t.capacityFull}</p>
-        <Link href="/" className="text-amber-600 hover:text-amber-400 text-sm transition-colors">
+        <Link href={returnHref} className="text-amber-600 hover:text-amber-400 text-sm transition-colors">
           {t.backToEvents}
         </Link>
       </div>
@@ -141,7 +142,7 @@ export default function RegisterForm({ eventId, guestPrice, isFull, isMember }: 
           </div>
         )}
         <div className="mt-6">
-          <Link href="/" className="text-amber-600 hover:text-amber-400 text-sm transition-colors">
+          <Link href={returnHref} className="text-amber-600 hover:text-amber-400 text-sm transition-colors">
             {t.viewOtherEvents}
           </Link>
         </div>

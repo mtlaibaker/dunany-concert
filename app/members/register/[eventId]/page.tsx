@@ -77,6 +77,7 @@ export default async function MemberRegisterPage({
             guestPrice={event.price}
             isFull={isFull || past || event.tbd}
             isMember={true}
+            returnHref="/members"
           />
         </div>
       </div>

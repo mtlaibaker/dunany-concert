@@ -11,6 +11,7 @@ export interface RegistrationData {
   phone: string | null
   memberCount: number
   guestCount: number
+  isMember: boolean
   createdAt: string
 }
 

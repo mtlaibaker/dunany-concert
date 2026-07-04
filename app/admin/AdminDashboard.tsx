@@ -43,6 +43,7 @@ export default async function AdminDashboard() {
     phone: r.phone,
     memberCount: r.memberCount,
     guestCount: r.guestCount,
+    isMember: r.isMember,
     createdAt: r.createdAt.toISOString(),
   }))
 

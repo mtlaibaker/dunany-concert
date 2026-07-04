@@ -22,6 +22,7 @@ export async function registerAction(
   const phone = (formData.get('phone') as string)?.trim() || null
   const memberCount = parseInt(formData.get('memberCount') as string) || 0
   const guestCount = parseInt(formData.get('guestCount') as string) || 0
+  const isMember = formData.get('isMember') === 'true'
 
   if (!name) return { error: 'nameRequired' }
   if (!email && !phone) return { error: 'contactRequired' }
@@ -47,7 +48,7 @@ export async function registerAction(
 
   try {
     await prisma.registration.create({
-      data: { eventId, name, email, phone, memberCount, guestCount },
+      data: { eventId, name, email, phone, memberCount, guestCount, isMember },
     })
     revalidatePath('/')
 

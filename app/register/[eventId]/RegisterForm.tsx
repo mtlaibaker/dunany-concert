@@ -74,9 +74,10 @@ interface Props {
   eventId: string
   guestPrice: number
   isFull?: boolean
+  isMember?: boolean
 }
 
-export default function RegisterForm({ eventId, guestPrice, isFull }: Props) {
+export default function RegisterForm({ eventId, guestPrice, isFull, isMember }: Props) {
   const { t, lang } = useLanguage()
   const [state, formAction] = useFormState(registerAction, null)
   const [name, setName] = useState('')
@@ -157,6 +158,7 @@ export default function RegisterForm({ eventId, guestPrice, isFull }: Props) {
 
       <form action={formAction} className="space-y-5" onSubmit={handleSubmit}>
         <input type="hidden" name="eventId" value={eventId} />
+        <input type="hidden" name="isMember" value={isMember ? 'true' : 'false'} />
 
         <div>
           <label className="block text-sm text-stone-300 mb-1.5" htmlFor="name">

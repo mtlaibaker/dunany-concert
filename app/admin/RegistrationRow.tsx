@@ -134,7 +134,16 @@ export default function RegistrationRow({ reg, striped }: Props) {
 
   return (
     <tr className={`${rowBg} ${opacity}`} style={{ borderBottom: '1px solid rgba(60,40,20,0.3)' }}>
-      <td className="px-5 py-3 text-stone-200 font-medium">{reg.name}</td>
+      <td className="px-5 py-3">
+        <div className="flex items-center gap-2">
+          <span className="text-stone-200 font-medium">{reg.name}</span>
+          {reg.isMember && (
+            <span className="text-xs px-1.5 py-0.5 rounded bg-amber-900/50 text-amber-400 border border-amber-800/40">
+              member
+            </span>
+          )}
+        </div>
+      </td>
       <td className="px-5 py-3">
         <div
           className="text-xs inline-flex items-center gap-1.5 px-2 py-1 rounded-full"

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 
 export interface AttendeeReg {
   id: string
@@ -26,11 +26,9 @@ interface Props {
 }
 
 export default function AttendeesPanel({ registrations, events }: Props) {
-  const [filter, setFilter] = useState<'all' | 'members'>('all')
-
-  const filtered = useMemo(
-    () => filter === 'members' ? registrations.filter((r) => r.isMember) : registrations,
-    [registrations, filter]
+  const memberRegs = useMemo(
+    () => registrations.filter((r) => r.isMember),
+    [registrations]
   )
 
   const rows = useMemo(
@@ -38,43 +36,21 @@ export default function AttendeesPanel({ registrations, events }: Props) {
       events
         .map((event) => ({
           event,
-          regs: filtered.filter((r) => r.eventId === event.id),
-          totalTickets: filtered
+          regs: memberRegs.filter((r) => r.eventId === event.id),
+          totalTickets: memberRegs
             .filter((r) => r.eventId === event.id)
             .reduce((s, r) => s + r.memberCount + r.guestCount, 0),
         }))
         .filter((r) => r.regs.length > 0),
-    [filtered, events]
+    [memberRegs, events]
   )
-
-  const btnBase = 'px-4 py-1.5 rounded-full text-xs font-semibold transition-colors'
-  const btnActive = 'bg-amber-700 text-amber-100'
-  const btnInactive = 'bg-stone-800 text-stone-400 hover:bg-stone-700'
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-serif text-xl text-amber-300">Who's Attending</h2>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`${btnBase} ${filter === 'all' ? btnActive : btnInactive}`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setFilter('members')}
-            className={`${btnBase} ${filter === 'members' ? btnActive : btnInactive}`}
-          >
-            Members Only
-          </button>
-        </div>
-      </div>
+      <h2 className="font-serif text-xl text-amber-300 mb-4">Who's Attending</h2>
 
       {rows.length === 0 ? (
-        <p className="text-stone-600 text-sm text-center py-10">
-          {filter === 'members' ? 'No member registrations yet.' : 'No registrations yet.'}
-        </p>
+        <p className="text-stone-600 text-sm text-center py-10">No member registrations yet.</p>
       ) : (
         <div className="space-y-4">
           {rows.map(({ event, regs, totalTickets }) => (
@@ -110,14 +86,7 @@ export default function AttendeesPanel({ registrations, events }: Props) {
                     className="flex items-center justify-between px-4 py-2.5"
                     style={{ borderTop: i > 0 ? '1px solid rgba(60,40,20,0.3)' : undefined }}
                   >
-                    <div className="flex items-center gap-2">
-                      <span className="text-stone-200 text-sm">{reg.name}</span>
-                      {reg.isMember && (
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-amber-900/50 text-amber-400 border border-amber-800/40">
-                          member
-                        </span>
-                      )}
-                    </div>
+                    <span className="text-stone-200 text-sm">{reg.name}</span>
                     <span className="text-stone-500 text-xs">
                       {reg.memberCount + reg.guestCount}{' '}
                       {reg.memberCount + reg.guestCount === 1 ? 'ticket' : 'tickets'}

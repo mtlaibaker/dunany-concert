@@ -2,8 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { deleteRegistrationAction, updateRegistrationAction } from './actions'
-import { getEventById } from '@/lib/events'
-import type { RegistrationData } from './RegistrationsTable'
+import type { RegistrationData, EventSummary } from './RegistrationsTable'
 
 const COUNT_OPTIONS = Array.from({ length: 11 }, (_, i) => i)
 
@@ -16,9 +15,10 @@ const selectClass =
 interface Props {
   reg: RegistrationData
   striped: boolean
+  event: EventSummary | undefined
 }
 
-export default function RegistrationRow({ reg, striped }: Props) {
+export default function RegistrationRow({ reg, striped, event }: Props) {
   const [editing, setEditing] = useState(false)
   const [isPending, startTransition] = useTransition()
 
@@ -27,8 +27,6 @@ export default function RegistrationRow({ reg, striped }: Props) {
   const [phone, setPhone] = useState(reg.phone ?? '')
   const [memberCount, setMemberCount] = useState(reg.memberCount)
   const [guestCount, setGuestCount] = useState(reg.guestCount)
-
-  const event = getEventById(reg.eventId)
 
   function handleDelete() {
     if (!confirm(`Delete registration for "${reg.name}"?`)) return

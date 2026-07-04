@@ -225,7 +225,7 @@ export default function RegistrationsTable({ registrations, events }: Props) {
               </tr>
             ) : (
               filtered.map((reg, i) => (
-                <RegistrationRow key={reg.id} reg={reg} striped={i % 2 !== 0} />
+                <RegistrationRow key={reg.id} reg={reg} striped={i % 2 !== 0} event={eventMap[reg.eventId]} />
               ))
             )}
           </tbody>

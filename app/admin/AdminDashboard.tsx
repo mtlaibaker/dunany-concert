@@ -64,9 +64,14 @@ export default async function AdminDashboard() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
           <div>
-            <Link href="/" className="text-amber-600 hover:text-amber-400 text-xs transition-colors">
-              ← Public Site
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/" className="text-amber-600 hover:text-amber-400 text-xs transition-colors">
+                ← Public Site
+              </Link>
+              <Link href="/members" className="text-amber-600 hover:text-amber-400 text-xs transition-colors">
+                Members Area →
+              </Link>
+            </div>
             <h1 className="font-serif text-3xl text-amber-300 mt-1">Registration Dashboard</h1>
             <p className="text-stone-500 text-sm mt-1">
               {registrations.length} registrations &nbsp;·&nbsp; {totalTickets} tickets

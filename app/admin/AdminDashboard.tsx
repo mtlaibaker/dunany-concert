@@ -33,7 +33,7 @@ export default async function AdminDashboard() {
     prisma.siteConfig.findUnique({ where: { id: 1 } }),
   ])
   const contactEmail = siteConfig?.contactEmail ?? 'Dan_Leblanc13@hotmail.com'
-  const memberSecretEnabled = !!siteConfig?.memberSecret
+  const memberSecret = siteConfig?.memberSecret ?? ''
   const totalTickets = registrations.reduce((s, r) => s + r.memberCount + r.guestCount, 0)
 
   const serializedRegs: RegistrationData[] = registrations.map((r) => ({
@@ -88,7 +88,7 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Contact info */}
-        <ContactEditor contactEmail={contactEmail} memberSecretEnabled={memberSecretEnabled} />
+        <ContactEditor contactEmail={contactEmail} memberSecret={memberSecret} />
 
         {/* Per-event cards — click to edit */}
         <div className="mb-3">

@@ -5,12 +5,13 @@ import { updateSiteConfigAction, sendTestEmailAction } from './actions'
 
 interface Props {
   contactEmail: string
-  memberSecretEnabled: boolean
+  memberSecret: string
 }
 
-export default function ContactEditor({ contactEmail, memberSecretEnabled }: Props) {
+export default function ContactEditor({ contactEmail, memberSecret: initialMemberSecret }: Props) {
   const [email, setEmail] = useState(contactEmail)
-  const [memberSecret, setMemberSecret] = useState('')
+  const [memberSecret, setMemberSecret] = useState(initialMemberSecret)
+  const [showSecret, setShowSecret] = useState(false)
   const [saved, setSaved] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [testStatus, setTestStatus] = useState<{ ok: boolean; message: string } | null>(null)
@@ -20,9 +21,8 @@ export default function ContactEditor({ contactEmail, memberSecretEnabled }: Pro
     if (!email.trim()) return
     const secretValue = memberSecret.trim()
     startTransition(async () => {
-      await updateSiteConfigAction(email.trim(), secretValue === '' ? undefined : secretValue)
+      await updateSiteConfigAction(email.trim(), secretValue)
       setSaved(true)
-      setMemberSecret('')
       setTimeout(() => setSaved(false), 2500)
     })
   }
@@ -59,16 +59,25 @@ export default function ContactEditor({ contactEmail, memberSecretEnabled }: Pro
         </div>
         <div>
           <label className="block text-xs text-stone-400 mb-1">Member Password</label>
-          <input
-            type="password"
-            value={memberSecret}
-            onChange={(e) => { setMemberSecret(e.target.value); setSaved(false); setTestStatus(null) }}
-            className="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 text-stone-100 text-sm focus:outline-none focus:border-amber-600 transition-colors"
-            placeholder="Enter a new member password"
-          />
+          <div className="relative">
+            <input
+              type={showSecret ? 'text' : 'password'}
+              value={memberSecret}
+              onChange={(e) => { setMemberSecret(e.target.value); setSaved(false); setTestStatus(null) }}
+              className="w-full bg-stone-900 border border-stone-700 rounded-lg px-3 py-2 pr-16 text-stone-100 text-sm focus:outline-none focus:border-amber-600 transition-colors"
+              placeholder="Enter a member password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowSecret((v) => !v)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-amber-400 transition-colors px-2 py-1"
+            >
+              {showSecret ? 'Hide' : 'Show'}
+            </button>
+          </div>
           <p className="text-xs text-stone-500 mt-2">
-            {memberSecretEnabled
-              ? 'A members password is currently enabled. Leave blank to keep it unchanged or enter a new password to update it.'
+            {memberSecret
+              ? 'Edit the password directly, or clear it and save to disable the members area.'
               : 'No members password is set yet. Enter one to enable the members area.'}
           </p>
         </div>
